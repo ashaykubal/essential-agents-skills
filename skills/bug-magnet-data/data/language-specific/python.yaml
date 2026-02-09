@@ -1,0 +1,174 @@
+metadata:
+  version: "1.0.0"
+  last_updated: "2026-02-01"
+  source_urls: []
+
+category: language-specific
+subcategory: python
+tier: T2
+
+bugs_caught:
+  - "Python-specific gotchas"
+  - "Mutable default arguments"
+  - "None vs False confusion"
+
+values:
+  # None vs False
+  none_vs_false:
+    comparisons:
+      - expr: "None == False"
+        result: "False"
+      - expr: "not None"
+        result: "True"
+      - expr: "bool(None)"
+        result: "False"
+    bugs_caught:
+      - "None == False is False"
+      - "None is falsy but != False"
+    safe_for_automation: true
+
+  # Empty containers
+  empty_list_falsy:
+    value: "[]"
+    bool_value: "False"
+    bugs_caught:
+      - "Empty list is falsy"
+    safe_for_automation: true
+
+  empty_dict_falsy:
+    value: "{}"
+    bool_value: "False"
+    bugs_caught:
+      - "Empty dict is falsy"
+    safe_for_automation: true
+
+  empty_string_falsy:
+    value: "''"
+    bool_value: "False"
+    bugs_caught:
+      - "Empty string is falsy"
+    safe_for_automation: true
+
+  zero_falsy:
+    value: "0"
+    bool_value: "False"
+    bugs_caught:
+      - "Zero is falsy"
+    safe_for_automation: true
+
+  # Mutable default arguments
+  mutable_default:
+    code: |
+      def append_to(item, lst=[]):
+          lst.append(item)
+          return lst
+    issue: "Default list shared between calls"
+    bugs_caught:
+      - "Mutable default argument"
+      - "State accumulation between calls"
+    safe_for_automation: true
+
+  # Integer caching
+  integer_identity:
+    comparisons:
+      - expr: "256 is 256"
+        result: "True"
+      - expr: "257 is 257"
+        result: "False or True"
+    bugs_caught:
+      - "Integer caching -5 to 256"
+      - "is vs == for numbers"
+    safe_for_automation: true
+    note: "Result varies by context in Python 3.8+"
+
+  string_interning:
+    comparisons:
+      - expr: "'hello' is 'hello'"
+        result: "True"
+      - expr: "'hello world' is 'hello world'"
+        result: "False or True"
+    bugs_caught:
+      - "String interning"
+      - "is vs == for strings"
+    safe_for_automation: true
+
+  # Division
+  floor_division:
+    expressions:
+      - expr: "7 // 2"
+        result: 3
+      - expr: "-7 // 2"
+        result: -4
+    bugs_caught:
+      - "Floor division with negatives"
+    safe_for_automation: true
+
+  # Chained comparisons
+  chained_comparison:
+    expressions:
+      - expr: "1 < 2 < 3"
+        result: "True"
+      - expr: "1 < 2 > 0"
+        result: "True"
+    bugs_caught:
+      - "Chained comparison evaluation"
+    safe_for_automation: true
+
+  # List comprehension scope
+  list_comp_scope:
+    code: |
+      x = 10
+      [x for x in range(5)]
+      print(x)  # What is x?
+    issue: "List comp variable scope"
+    bugs_caught:
+      - "Loop variable scope in comprehension"
+    safe_for_automation: true
+    note: "Python 3: x is still 10. Python 2: x is 4"
+
+  # Late binding closures
+  closure_late_binding:
+    code: |
+      funcs = [lambda: i for i in range(3)]
+      [f() for f in funcs]
+    result: "[2, 2, 2]"
+    bugs_caught:
+      - "Late binding in closures"
+      - "All lambdas return same value"
+    safe_for_automation: true
+
+  # Exception handling
+  exception_in_finally:
+    code: |
+      def f():
+          try:
+              return 1
+          finally:
+              return 2
+    result: "returns 2"
+    bugs_caught:
+      - "finally overrides return"
+    safe_for_automation: true
+
+  # Dictionary iteration
+  dict_modification:
+    code: |
+      d = {'a': 1, 'b': 2}
+      for k in d:
+          del d[k]
+    issue: "RuntimeError: dictionary changed size"
+    bugs_caught:
+      - "Dict modification during iteration"
+    safe_for_automation: true
+
+  # Unicode
+  unicode_length:
+    expressions:
+      - expr: "len('😀')"
+        result: 1
+      - expr: "len('👨‍👩‍👧‍👦')"
+        result: 7
+    bugs_caught:
+      - "Emoji length counting"
+      - "ZWJ sequence handling"
+    safe_for_automation: true

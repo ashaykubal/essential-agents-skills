@@ -1,0 +1,69 @@
+metadata:
+  version: "1.0.0"
+  last_updated: "2026-02-01"
+  source_urls: []
+
+category: numbers
+subcategory: special
+tier: T1
+
+bugs_caught:
+  - "NaN propagation"
+  - "Infinity handling"
+  - "Special value comparisons"
+
+values:
+  nan:
+    value: "NaN"
+    bugs_caught:
+      - "NaN !== NaN comparison failure"
+      - "NaN propagation through calculations"
+      - "isNaN vs Number.isNaN confusion"
+    safe_for_automation: true
+    note: "Use Number.isNaN() not isNaN()"
+
+  positive_infinity:
+    value: "Infinity"
+    bugs_caught:
+      - "Infinite loop risks"
+      - "Display of infinite values"
+      - "Comparison with Infinity"
+    safe_for_automation: true
+
+  negative_infinity:
+    value: "-Infinity"
+    bugs_caught:
+      - "Negative infinity handling"
+      - "Min value calculations"
+    safe_for_automation: true
+
+  epsilon:
+    value: 2.220446049250313e-16
+    bugs_caught:
+      - "Floating point comparison threshold"
+    safe_for_automation: true
+    note: "Number.EPSILON in JavaScript"
+
+  max_value:
+    value: 1.7976931348623157e+308
+    bugs_caught:
+      - "Maximum float value"
+      - "Overflow to Infinity"
+    safe_for_automation: true
+    note: "Number.MAX_VALUE in JavaScript"
+
+  min_value:
+    value: 5e-324
+    bugs_caught:
+      - "Minimum positive float"
+      - "Underflow to zero"
+    safe_for_automation: true
+    note: "Number.MIN_VALUE in JavaScript (positive)"
+
+  min_safe_integer:
+    value: -9007199254740991
+    bugs_caught:
+      - "Minimum safe integer"
+      - "Precision loss below this"
+    safe_for_automation: true
+    note: "-(2^53 - 1)"

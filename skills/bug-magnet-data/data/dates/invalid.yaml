@@ -1,0 +1,132 @@
+metadata:
+  version: "1.0.0"
+  last_updated: "2026-02-01"
+  source_urls: []
+
+category: dates
+subcategory: invalid
+tier: T2
+
+bugs_caught:
+  - "Invalid date parsing"
+  - "Date validation bypass"
+  - "Error handling for bad dates"
+
+values:
+  feb_30:
+    value: "2024-02-30"
+    bugs_caught:
+      - "February 30 doesn't exist"
+      - "Date validation"
+    safe_for_automation: true
+
+  feb_29_non_leap:
+    value: "2023-02-29"
+    bugs_caught:
+      - "Feb 29 in non-leap year"
+    safe_for_automation: true
+
+  month_32:
+    value: "2024-01-32"
+    bugs_caught:
+      - "Day 32 doesn't exist"
+    safe_for_automation: true
+
+  month_0:
+    value: "2024-00-15"
+    bugs_caught:
+      - "Month 0 doesn't exist"
+    safe_for_automation: true
+
+  month_13:
+    value: "2024-13-15"
+    bugs_caught:
+      - "Month 13 doesn't exist"
+    safe_for_automation: true
+
+  day_0:
+    value: "2024-06-00"
+    bugs_caught:
+      - "Day 0 doesn't exist"
+    safe_for_automation: true
+
+  negative_year:
+    value: "-2024-06-15"
+    bugs_caught:
+      - "Negative year handling"
+      - "BCE date handling"
+    safe_for_automation: true
+
+  hour_24:
+    value: "2024-06-15T24:00:00"
+    bugs_caught:
+      - "Hour 24 validity"
+      - "ISO 8601 allows 24:00:00"
+    safe_for_automation: true
+    note: "Technically valid in ISO 8601, means midnight next day"
+
+  hour_25:
+    value: "2024-06-15T25:00:00"
+    bugs_caught:
+      - "Hour 25 doesn't exist"
+    safe_for_automation: true
+
+  minute_60:
+    value: "2024-06-15T12:60:00"
+    bugs_caught:
+      - "Minute 60 doesn't exist"
+    safe_for_automation: true
+
+  second_60:
+    value: "2024-06-15T23:59:60"
+    bugs_caught:
+      - "Leap second handling"
+    safe_for_automation: true
+    note: "Valid during leap seconds, otherwise invalid"
+
+  empty_string:
+    value: ""
+    bugs_caught:
+      - "Empty date string"
+      - "Null/empty handling"
+    safe_for_automation: true
+
+  invalid_format:
+    value: "not-a-date"
+    bugs_caught:
+      - "Non-date string parsing"
+    safe_for_automation: true
+
+  partial_date:
+    value: "2024-06"
+    bugs_caught:
+      - "Partial date handling"
+      - "Missing day"
+    safe_for_automation: true
+
+  wrong_separator:
+    value: "2024/06/15"
+    bugs_caught:
+      - "Slash separator handling"
+      - "Format flexibility"
+    safe_for_automation: true
+
+  us_format:
+    value: "06/15/2024"
+    bugs_caught:
+      - "US date format (MM/DD/YYYY)"
+      - "Ambiguous format"
+    safe_for_automation: true
+
+  european_format:
+    value: "15/06/2024"
+    bugs_caught:
+      - "European format (DD/MM/YYYY)"
+      - "Format ambiguity"
+    safe_for_automation: true
+
+  ambiguous_date:
+    value: "01/02/2024"
+    bugs_caught:
+      - "Ambiguous date (Jan 2 or Feb 1?)"
+    safe_for_automation: true

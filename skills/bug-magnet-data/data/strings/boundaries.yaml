@@ -1,0 +1,109 @@
+metadata:
+  version: "1.0.0"
+  last_updated: "2026-02-01"
+  source_urls: []
+
+category: strings
+subcategory: boundaries
+tier: T0
+
+bugs_caught:
+  - "NullPointerException on empty input"
+  - "Off-by-one in length validation"
+  - "Buffer overflow on long strings"
+  - "Whitespace-only treated as empty"
+
+values:
+  empty:
+    value: ""
+    bugs_caught:
+      - "NullPointerException"
+      - "Empty input not handled"
+      - "Length validation off-by-one"
+    safe_for_automation: true
+
+  single_char:
+    value: "a"
+    bugs_caught:
+      - "Minimum length validation"
+      - "Single vs empty distinction"
+    safe_for_automation: true
+
+  two_chars:
+    value: "ab"
+    bugs_caught:
+      - "Off-by-one at minimum boundary"
+    safe_for_automation: true
+
+  whitespace_only:
+    value: "   "
+    bugs_caught:
+      - "Trim logic errors"
+      - "Empty vs whitespace distinction"
+    safe_for_automation: true
+
+  single_space:
+    value: " "
+    bugs_caught:
+      - "Space handling"
+      - "Trim edge case"
+    safe_for_automation: true
+
+  tabs_and_spaces:
+    value: "\t  \t"
+    bugs_caught:
+      - "Mixed whitespace handling"
+      - "Inconsistent trim behavior"
+    safe_for_automation: true
+
+  leading_whitespace:
+    value: "  hello"
+    bugs_caught:
+      - "Left trim failures"
+      - "Whitespace preservation bugs"
+    safe_for_automation: true
+
+  trailing_whitespace:
+    value: "hello  "
+    bugs_caught:
+      - "Right trim failures"
+      - "Trailing space handling"
+    safe_for_automation: true
+
+  long_string_1000:
+    value_template: "a * 1000"
+    bugs_caught:
+      - "Performance degradation"
+      - "Memory allocation issues"
+    safe_for_automation: true
+    note: "Generate 1000 'a' characters"
+
+  long_string_10000:
+    value_template: "a * 10000"
+    bugs_caught:
+      - "Buffer limits"
+      - "Truncation errors"
+    safe_for_automation: true
+    note: "Generate 10000 'a' characters"
+
+  max_length_minus_1:
+    value_template: "a * (MAX_LENGTH - 1)"
+    bugs_caught:
+      - "Off-by-one at maximum"
+    safe_for_automation: true
+    note: "Use system-specific MAX_LENGTH"
+
+  max_length:
+    value_template: "a * MAX_LENGTH"
+    bugs_caught:
+      - "Exact boundary handling"
+    safe_for_automation: true
+    note: "Use system-specific MAX_LENGTH"
+
+  max_length_plus_1:
+    value_template: "a * (MAX_LENGTH + 1)"
+    bugs_caught:
+      - "Overflow at maximum"
+      - "Rejection message quality"
+    safe_for_automation: true
+    note: "Use system-specific MAX_LENGTH"

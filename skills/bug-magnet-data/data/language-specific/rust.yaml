@@ -1,0 +1,148 @@
+metadata:
+  version: "1.0.0"
+  last_updated: "2026-02-01"
+  source_urls: []
+
+category: language-specific
+subcategory: rust
+tier: T2
+
+bugs_caught:
+  - "Ownership and borrowing edge cases"
+  - "Lifetime issues"
+  - "Unsafe code pitfalls"
+
+values:
+  # Ownership
+  move_after_use:
+    code: |
+      let s = String::from("hello");
+      let s2 = s;
+      println!("{}", s);  // Error
+    issue: "Use after move"
+    bugs_caught:
+      - "Value moved, then used"
+    safe_for_automation: true
+
+  partial_move:
+    code: |
+      struct Point { x: i32, y: i32 }
+      let p = Point { x: 1, y: 2 };
+      let x = p.x;
+      println!("{:?}", p);  // Error
+    issue: "Partial move makes struct unusable"
+    bugs_caught:
+      - "Partial move of struct"
+    safe_for_automation: true
+
+  # Borrowing
+  mutable_while_borrowed:
+    code: |
+      let mut v = vec![1, 2, 3];
+      let first = &v[0];
+      v.push(4);  // Error
+      println!("{}", first);
+    issue: "Mutable borrow while immutable borrow exists"
+    bugs_caught:
+      - "Borrow checker violation"
+    safe_for_automation: true
+
+  iterator_invalidation:
+    code: |
+      let mut v = vec![1, 2, 3];
+      for i in &v {
+          v.push(*i);  // Error
+      }
+    issue: "Modification during iteration"
+    bugs_caught:
+      - "Iterator invalidation"
+    safe_for_automation: true
+
+  # Lifetimes
+  dangling_reference:
+    code: |
+      fn dangle() -> &String {
+          let s = String::from("hello");
+          &s  // Error: returns reference to dropped value
+      }
+    issue: "Returning reference to local"
+    bugs_caught:
+      - "Dangling reference"
+    safe_for_automation: true
+
+  lifetime_elision_surprise:
+    code: |
+      fn longest(x: &str, y: &str) -> &str {
+          if x.len() > y.len() { x } else { y }
+      }  // Error: need lifetime annotations
+    issue: "Lifetime elision rules don't apply"
+    bugs_caught:
+      - "Missing lifetime annotation"
+    safe_for_automation: true
+
+  # Option/Result
+  unwrap_none:
+    code: |
+      let x: Option<i32> = None;
+      x.unwrap();  // Panic!
+    issue: "Unwrap on None"
+    bugs_caught:
+      - "Panicking on None"
+    safe_for_automation: true
+
+  unwrap_err:
+    code: |
+      let x: Result<i32, &str> = Err("oops");
+      x.unwrap();  // Panic!
+    issue: "Unwrap on Err"
+    bugs_caught:
+      - "Panicking on Err"
+    safe_for_automation: true
+
+  # Integer overflow
+  overflow_debug:
+    code: |
+      let x: u8 = 255;
+      let y = x + 1;  // Panic in debug, wrap in release
+    issue: "Integer overflow"
+    bugs_caught:
+      - "Different behavior debug vs release"
+    safe_for_automation: true
+
+  # Unsafe
+  unsafe_deref_null:
+    code: |
+      let ptr: *const i32 = std::ptr::null();
+      unsafe { *ptr }  // Undefined behavior
+    issue: "Null pointer dereference"
+    bugs_caught:
+      - "UB in unsafe code"
+    safe_for_automation: true
+
+  data_race_unsafe:
+    code: |
+      static mut COUNTER: i32 = 0;
+      // Multiple threads accessing COUNTER
+    issue: "Data race in unsafe static"
+    bugs_caught:
+      - "Data race with mutable static"
+    safe_for_automation: true
+
+  # String/str
+  string_indexing:
+    code: |
+      let s = String::from("hello");
+      let c = s[0];  // Error: cannot index String
+    issue: "Direct string indexing not allowed"
+    bugs_caught:
+      - "UTF-8 aware string handling"
+    safe_for_automation: true
+
+  string_slice_boundary:
+    code: |
+      let s = "héllo";
+      let slice = &s[0..2];  // Panic if not char boundary
+    issue: "Slice not on char boundary"
+    bugs_caught:
+      - "Multi-byte character slicing"
+    safe_for_automation: true

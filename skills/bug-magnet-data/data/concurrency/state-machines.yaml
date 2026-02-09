@@ -1,0 +1,115 @@
+metadata:
+  version: "1.0.0"
+  last_updated: "2026-02-01"
+  source_urls: []
+
+category: concurrency
+subcategory: state-machines
+tier: T2
+type: scenario_pattern
+
+bugs_caught:
+  - "Invalid state transitions"
+  - "Stuck states"
+  - "Interrupted workflows"
+
+scenarios:
+  invalid_transition:
+    description: "Attempt transition that shouldn't be allowed"
+    setup: "Order in 'shipped' state"
+    action: "Try to mark as 'pending'"
+    expected_behavior: "Transition rejected with error"
+    bugs_caught:
+      - "Invalid state transition allowed"
+      - "Business rule violation"
+    safe_for_automation: true
+
+  skip_required_state:
+    description: "Jump directly to final state"
+    setup: "Order in 'pending' state"
+    action: "Try to mark as 'delivered' without 'shipped'"
+    expected_behavior: "Transition rejected"
+    bugs_caught:
+      - "Skipped required state"
+      - "Missing validation"
+    safe_for_automation: true
+
+  duplicate_transition:
+    description: "Apply same transition twice"
+    setup: "Order in 'pending' state"
+    action: "Ship order twice"
+    expected_behavior: "Second transition no-op or error"
+    bugs_caught:
+      - "Duplicate action processing"
+      - "Non-idempotent transitions"
+    safe_for_automation: true
+
+  interrupted_flow:
+    description: "Process crashes mid-transition"
+    setup: "Multi-step state change in progress"
+    action: "Crash after first step, before commit"
+    expected_behavior: "Rollback or resumable state"
+    bugs_caught:
+      - "Inconsistent state"
+      - "Orphaned records"
+    safe_for_automation: true
+
+  terminal_state_escape:
+    description: "Try to exit terminal state"
+    setup: "Order in 'cancelled' (terminal) state"
+    action: "Try to reopen or ship"
+    expected_behavior: "Transition rejected"
+    bugs_caught:
+      - "Terminal state escape"
+      - "Zombie records"
+    safe_for_automation: true
+
+  parallel_conflicting_transitions:
+    description: "Two valid transitions attempted simultaneously"
+    setup: "Order in 'pending' state"
+    action: "User A ships, User B cancels at same time"
+    expected_behavior: "One succeeds, one fails"
+    bugs_caught:
+      - "Both transitions applied"
+      - "Inconsistent final state"
+    safe_for_automation: true
+
+  timeout_transition:
+    description: "State expires without action"
+    setup: "Order in 'awaiting_payment' with 30min timeout"
+    action: "Wait for timeout"
+    expected_behavior: "Auto-transition to 'expired'"
+    bugs_caught:
+      - "Stuck in waiting state"
+      - "Timer not firing"
+    safe_for_automation: true
+
+  retry_failed_transition:
+    description: "Transition fails, then retry"
+    setup: "Payment transition failed"
+    action: "User retries payment"
+    expected_behavior: "Retry allowed from failed state"
+    bugs_caught:
+      - "Retry blocked"
+      - "Wrong state after failure"
+    safe_for_automation: true
+
+  conditional_branch:
+    description: "State transition with conditions"
+    setup: "Order with mixed inventory (some available, some not)"
+    action: "Process order"
+    expected_behavior: "Correct branch based on condition"
+    bugs_caught:
+      - "Wrong branch taken"
+      - "Condition evaluated incorrectly"
+    safe_for_automation: true
+
+  reentry_same_state:
+    description: "Transition to current state"
+    setup: "Order in 'processing' state"
+    action: "Mark as 'processing' again"
+    expected_behavior: "No-op or trigger side effects?"
+    bugs_caught:
+      - "Unexpected side effects on re-entry"
+      - "Counter increment on no-op"
+    safe_for_automation: true

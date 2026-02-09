@@ -1,0 +1,165 @@
+metadata:
+  version: "1.0.0"
+  last_updated: "2026-02-01"
+  source_urls: []
+
+category: formats
+subcategory: url
+tier: T2
+
+bugs_caught:
+  - "URL parsing errors"
+  - "Protocol handling"
+  - "Encoding issues"
+
+values:
+  # Valid URLs often mishandled
+  no_www:
+    value: "https://example.com"
+    valid: true
+    bugs_caught:
+      - "Missing www handling"
+    safe_for_automation: true
+
+  with_port:
+    value: "https://example.com:8080"
+    valid: true
+    bugs_caught:
+      - "Port number handling"
+    safe_for_automation: true
+
+  with_auth:
+    value: "https://user:pass@example.com"
+    valid: true
+    bugs_caught:
+      - "URL authentication"
+      - "Credential exposure"
+    safe_for_automation: true
+
+  with_query:
+    value: "https://example.com?foo=bar&baz=qux"
+    valid: true
+    bugs_caught:
+      - "Query string parsing"
+    safe_for_automation: true
+
+  with_fragment:
+    value: "https://example.com#section"
+    valid: true
+    bugs_caught:
+      - "Fragment handling"
+    safe_for_automation: true
+
+  encoded_space:
+    value: "https://example.com/path%20with%20spaces"
+    valid: true
+    bugs_caught:
+      - "URL encoding"
+    safe_for_automation: true
+
+  unicode_path:
+    value: "https://example.com/café"
+    valid: true
+    bugs_caught:
+      - "Unicode in path"
+      - "IRI handling"
+    safe_for_automation: true
+
+  idn:
+    value: "https://münchen.de"
+    valid: true
+    bugs_caught:
+      - "International domain"
+      - "Punycode"
+    safe_for_automation: true
+
+  ipv4:
+    value: "http://192.168.1.1"
+    valid: true
+    bugs_caught:
+      - "IPv4 address"
+    safe_for_automation: true
+
+  ipv6:
+    value: "http://[::1]"
+    valid: true
+    bugs_caught:
+      - "IPv6 address"
+      - "Bracket notation"
+    safe_for_automation: true
+
+  localhost:
+    value: "http://localhost"
+    valid: true
+    bugs_caught:
+      - "Localhost handling"
+    safe_for_automation: true
+
+  file_protocol:
+    value: "file:///etc/passwd"
+    valid: true
+    bugs_caught:
+      - "File protocol"
+      - "Local file access"
+    safe_for_automation: true
+
+  data_uri:
+    value: "data:text/plain;base64,SGVsbG8="
+    valid: true
+    bugs_caught:
+      - "Data URI"
+      - "Embedded data"
+    safe_for_automation: true
+
+  javascript_uri:
+    value: "javascript:alert(1)"
+    valid: true
+    bugs_caught:
+      - "JavaScript protocol"
+      - "XSS via URL"
+    safe_for_automation: true
+    severity: security
+
+  # Malformed URLs
+  no_protocol:
+    value: "example.com"
+    bugs_caught:
+      - "Missing protocol"
+    safe_for_automation: true
+
+  double_slash_path:
+    value: "https://example.com//path"
+    bugs_caught:
+      - "Double slash in path"
+    safe_for_automation: true
+
+  backslash:
+    value: "https://example.com\\path"
+    bugs_caught:
+      - "Backslash in URL"
+    safe_for_automation: true
+
+  newline:
+    value: "https://example.com/\npath"
+    bugs_caught:
+      - "Newline in URL"
+      - "Header injection"
+    safe_for_automation: true
+
+  tab:
+    value: "https://example.com/\tpath"
+    bugs_caught:
+      - "Tab in URL"
+    safe_for_automation: true
+
+  empty:
+    value: ""
+    bugs_caught:
+      - "Empty URL"
+    safe_for_automation: true
+
+  whitespace_only:
+    value: "   "
+    bugs_caught:
+      - "Whitespace URL"
+    safe_for_automation: true

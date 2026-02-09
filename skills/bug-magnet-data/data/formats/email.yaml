@@ -1,0 +1,154 @@
+metadata:
+  version: "1.0.0"
+  last_updated: "2026-02-01"
+  source_urls: []
+
+category: formats
+subcategory: email
+tier: T2
+
+bugs_caught:
+  - "Email validation too strict"
+  - "Email validation too lenient"
+  - "RFC compliance issues"
+
+values:
+  # Valid but often rejected
+  plus_addressing:
+    value: "user+tag@example.com"
+    valid: true
+    bugs_caught:
+      - "Plus addressing rejected"
+      - "Gmail style tagging"
+    safe_for_automation: true
+
+  subdomain:
+    value: "user@mail.example.com"
+    valid: true
+    bugs_caught:
+      - "Subdomain handling"
+    safe_for_automation: true
+
+  numeric_domain:
+    value: "user@123.45.67.89"
+    valid: true
+    bugs_caught:
+      - "IP address domain"
+    safe_for_automation: true
+
+  quoted_local:
+    value: "\"user name\"@example.com"
+    valid: true
+    bugs_caught:
+      - "Quoted local part"
+      - "Space in email"
+    safe_for_automation: true
+
+  dotted_local:
+    value: "user.name.here@example.com"
+    valid: true
+    bugs_caught:
+      - "Multiple dots handling"
+    safe_for_automation: true
+
+  single_char_local:
+    value: "a@example.com"
+    valid: true
+    bugs_caught:
+      - "Single character local"
+    safe_for_automation: true
+
+  long_local:
+    value: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@example.com"
+    valid: true
+    bugs_caught:
+      - "64-char local part limit"
+    safe_for_automation: true
+    note: "Max 64 chars in local part"
+
+  new_tld:
+    value: "user@example.technology"
+    valid: true
+    bugs_caught:
+      - "New TLD rejection"
+      - "TLD length assumptions"
+    safe_for_automation: true
+
+  idn_domain:
+    value: "user@münchen.de"
+    valid: true
+    bugs_caught:
+      - "International domain name"
+      - "Punycode handling"
+    safe_for_automation: true
+
+  # Invalid but often accepted
+  double_dot:
+    value: "user..name@example.com"
+    valid: false
+    bugs_caught:
+      - "Consecutive dots invalid"
+    safe_for_automation: true
+
+  leading_dot:
+    value: ".user@example.com"
+    valid: false
+    bugs_caught:
+      - "Leading dot invalid"
+    safe_for_automation: true
+
+  trailing_dot_local:
+    value: "user.@example.com"
+    valid: false
+    bugs_caught:
+      - "Trailing dot in local"
+    safe_for_automation: true
+
+  no_at:
+    value: "userexample.com"
+    valid: false
+    bugs_caught:
+      - "Missing @ sign"
+    safe_for_automation: true
+
+  double_at:
+    value: "user@@example.com"
+    valid: false
+    bugs_caught:
+      - "Double @ sign"
+    safe_for_automation: true
+
+  no_domain:
+    value: "user@"
+    valid: false
+    bugs_caught:
+      - "Missing domain"
+    safe_for_automation: true
+
+  no_local:
+    value: "@example.com"
+    valid: false
+    bugs_caught:
+      - "Missing local part"
+    safe_for_automation: true
+
+  space_unquoted:
+    value: "user name@example.com"
+    valid: false
+    bugs_caught:
+      - "Unquoted space"
+    safe_for_automation: true
+
+  special_unquoted:
+    value: "user<>@example.com"
+    valid: false
+    bugs_caught:
+      - "Special chars unquoted"
+    safe_for_automation: true
+
+  empty:
+    value: ""
+    valid: false
+    bugs_caught:
+      - "Empty email"
+    safe_for_automation: true

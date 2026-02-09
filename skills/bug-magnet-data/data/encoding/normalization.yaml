@@ -1,0 +1,105 @@
+metadata:
+  version: "1.0.0"
+  last_updated: "2026-02-01"
+  source_urls: []
+
+category: encoding
+subcategory: normalization
+tier: T2
+
+bugs_caught:
+  - "Unicode normalization mismatches"
+  - "String comparison failures"
+  - "Security bypasses"
+
+values:
+  nfc_composed:
+    value: "\u00e9"
+    bugs_caught:
+      - "NFC composed form"
+      - "é as single codepoint"
+    safe_for_automation: true
+    codepoints: ["U+00E9"]
+
+  nfd_decomposed:
+    value: "\u0065\u0301"
+    bugs_caught:
+      - "NFD decomposed form"
+      - "é as e + combining accent"
+    safe_for_automation: true
+    codepoints: ["U+0065", "U+0301"]
+
+  nfc_vs_nfd:
+    values:
+      nfc: "\u00e9"
+      nfd: "\u0065\u0301"
+    bugs_caught:
+      - "Normalization comparison failure"
+      - "Visual identical, byte different"
+    safe_for_automation: true
+    note: "Both render as é, but != without normalization"
+
+  overlong_utf8:
+    value: "\xC0\xAF"
+    bugs_caught:
+      - "Overlong UTF-8 encoding"
+      - "Security filter bypass"
+    safe_for_automation: true
+    note: "Overlong encoding of '/'"
+
+  invalid_utf8_continuation:
+    value: "\x80\x81\x82"
+    bugs_caught:
+      - "Invalid UTF-8 continuation bytes"
+    safe_for_automation: true
+
+  invalid_utf8_start:
+    value: "\xFE\xFF"
+    bugs_caught:
+      - "Invalid UTF-8 start bytes"
+    safe_for_automation: true
+
+  surrogate_pair:
+    value: "\uD83D\uDE00"
+    bugs_caught:
+      - "UTF-16 surrogate pair"
+      - "Emoji handling"
+    safe_for_automation: true
+    note: "😀 as surrogate pair"
+
+  unpaired_surrogate:
+    value: "\uD800"
+    bugs_caught:
+      - "Unpaired surrogate"
+      - "Invalid UTF-16"
+    safe_for_automation: true
+
+  bidi_override:
+    value: "\u202Edesrever"
+    bugs_caught:
+      - "Right-to-left override"
+      - "Display spoofing"
+    safe_for_automation: true
+    note: "Renders as 'reversed'"
+
+  zero_width:
+    value: "a\u200Bb"
+    bugs_caught:
+      - "Zero-width space"
+      - "Invisible characters"
+    safe_for_automation: true
+
+  soft_hyphen:
+    value: "soft\u00ADhyphen"
+    bugs_caught:
+      - "Soft hyphen handling"
+      - "Print vs display"
+    safe_for_automation: true
+
+  ligature:
+    value: "\uFB01"
+    bugs_caught:
+      - "Ligature handling (fi)"
+      - "Search/match failure"
+    safe_for_automation: true
+    note: "fi ligature vs 'fi'"

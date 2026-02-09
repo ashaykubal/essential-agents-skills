@@ -1,0 +1,143 @@
+metadata:
+  version: "1.0.0"
+  last_updated: "2026-02-01"
+  source_urls: []
+
+category: booleans
+subcategory: boundaries
+tier: T0
+
+bugs_caught:
+  - "Null reference exceptions"
+  - "Truthy/falsy confusion"
+  - "Type coercion bugs"
+
+values:
+  true:
+    value: true
+    bugs_caught:
+      - "Boolean true handling"
+    safe_for_automation: true
+
+  false:
+    value: false
+    bugs_caught:
+      - "Boolean false handling"
+      - "Falsy but valid distinction"
+    safe_for_automation: true
+
+  null:
+    value: null
+    bugs_caught:
+      - "Null reference exceptions"
+      - "null vs undefined"
+      - "Optional chaining need"
+    safe_for_automation: true
+
+  undefined:
+    value: "undefined"
+    bugs_caught:
+      - "Undefined variable access"
+      - "Missing property handling"
+    safe_for_automation: true
+    note: "JavaScript-specific"
+
+  # Truthy values that aren't true
+  truthy_string:
+    value: "false"
+    bugs_caught:
+      - "String 'false' is truthy"
+      - "Boolean string parsing"
+    safe_for_automation: true
+
+  truthy_zero_string:
+    value: "0"
+    bugs_caught:
+      - "String '0' is truthy"
+    safe_for_automation: true
+
+  truthy_empty_array:
+    value: []
+    bugs_caught:
+      - "Empty array is truthy (JavaScript)"
+      - "Array length check needed"
+    safe_for_automation: true
+    note: "JavaScript: [] is truthy, Python: [] is falsy"
+
+  truthy_empty_object:
+    value: {}
+    bugs_caught:
+      - "Empty object is truthy"
+      - "Object.keys check needed"
+    safe_for_automation: true
+
+  # Falsy values that aren't false
+  falsy_zero:
+    value: 0
+    bugs_caught:
+      - "Zero is falsy but valid"
+      - "0 vs null confusion"
+    safe_for_automation: true
+
+  falsy_empty_string:
+    value: ""
+    bugs_caught:
+      - "Empty string is falsy"
+      - "'' vs null confusion"
+    safe_for_automation: true
+
+  falsy_nan:
+    value: "NaN"
+    bugs_caught:
+      - "NaN is falsy"
+    safe_for_automation: true
+
+  # Boolean-like strings
+  bool_string_true:
+    value: "true"
+    bugs_caught:
+      - "Boolean string parsing"
+    safe_for_automation: true
+
+  bool_string_True:
+    value: "True"
+    bugs_caught:
+      - "Case-sensitive boolean parsing"
+    safe_for_automation: true
+
+  bool_string_TRUE:
+    value: "TRUE"
+    bugs_caught:
+      - "Uppercase boolean parsing"
+    safe_for_automation: true
+
+  bool_string_yes:
+    value: "yes"
+    bugs_caught:
+      - "YAML-style boolean"
+    safe_for_automation: true
+
+  bool_string_on:
+    value: "on"
+    bugs_caught:
+      - "Form checkbox value"
+    safe_for_automation: true
+
+  bool_string_1:
+    value: "1"
+    bugs_caught:
+      - "Numeric boolean"
+    safe_for_automation: true
+
+  bool_number_1:
+    value: 1
+    bugs_caught:
+      - "Number 1 as boolean"
+    safe_for_automation: true
+
+  bool_number_2:
+    value: 2
+    bugs_caught:
+      - "Non-zero non-one number"
+      - "Truthy but not === true"
+    safe_for_automation: true

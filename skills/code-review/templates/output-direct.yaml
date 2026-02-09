@@ -1,0 +1,86 @@
+# Output Template: Direct Invocation
+#
+# Use this template when code-review is invoked directly by user (/code-review)
+# All four sections are included, findings grouped by severity
+
+code_review:
+  # Metadata
+  timestamp: "2026-01-31T12:00:00Z"  # ISO 8601 format
+  mode: comprehensive  # comprehensive | quick
+  framework_detected: react  # react | express | angular | vue | django | flask | generic
+  framework_override: null  # User-specified override, if any
+
+  # Files reviewed
+  files_reviewed:
+    - path/to/file1.ts
+    - path/to/file2.ts
+
+  # Phase 1: Static analysis results
+  static_analysis:
+    typecheck: passed  # passed | failed | skipped
+    typecheck_errors: []  # Array of error messages if failed
+    lint: passed  # passed | failed | skipped
+    lint_errors: []  # Array of error messages if failed
+
+  # Phase 2: LLM review findings
+  findings:
+    # Critical - Must fix before merge
+    critical:
+      - file: src/auth/token.ts
+        line: 45
+        column: 12  # Optional
+        section: security  # security | type_safety | linting | standards
+        pattern: sql_injection
+        confidence: verified  # verified | suspected
+        evidence: "User input from req.query.id flows to db.query() at line 45 without sanitization"
+        owasp: "A03:2021-Injection"  # For security findings
+        description: "User input concatenated into SQL query"
+        why: "Allows attacker to execute arbitrary SQL commands"
+        fix: "Use parameterized query: db.query('SELECT * FROM users WHERE id = ?', [userId])"
+
+    # Important - Should fix
+    important:
+      - file: src/api/users.ts
+        line: 120
+        section: type_safety
+        pattern: any_usage
+        confidence: verified
+        evidence: "Explicit 'any' type annotation at line 120"
+        description: "API response typed as 'any'"
+        why: "Bypasses type checking for response handling"
+        fix: "Define interface UserResponse and use typed fetch"
+
+    # Suggestions - Optional improvements
+    suggestions:
+      - file: src/api/users.ts
+        line: 85
+        section: linting
+        pattern: generic_naming
+        confidence: suspected
+        evidence: "Variable name 'data' matches generic naming pattern"
+        description: "Variable 'data' could be more descriptive"
+        why: "Generic name doesn't reveal purpose"
+        fix: "Rename to 'userProfile' or 'apiResponse'"
+
+  # Summary
+  summary:
+    critical_count: 1
+    important_count: 1
+    suggestion_count: 1
+    sections_run:
+      - security
+      - type_safety
+      - linting
+      - standards
+    recommendation: "Fix critical SQL injection before merge"
+    review_complete: true
+
+  # Git context (optional, when --include-git-context)
+  git_context:
+    enabled: false
+    findings_with_context: []
+    # Example when enabled:
+    # - finding_index: 2  # References suggestions[0]
+    #   last_modified: "2025-08-15 by @alice"
+    #   commit_message: "Workaround for #1234 - external API timeout handling"
+    #   note: "Complexity may be intentional - verify before refactoring"

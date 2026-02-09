@@ -1,0 +1,137 @@
+metadata:
+  version: "1.0.0"
+  last_updated: "2026-02-01"
+  source_urls: []
+
+category: dates
+subcategory: boundaries
+tier: T2
+
+bugs_caught:
+  - "Epoch handling"
+  - "Y2K38 overflow"
+  - "Leap year calculations"
+
+values:
+  epoch:
+    value: "1970-01-01T00:00:00Z"
+    timestamp: 0
+    bugs_caught:
+      - "Epoch/zero date handling"
+      - "Default date confusion"
+    safe_for_automation: true
+
+  before_epoch:
+    value: "1969-12-31T23:59:59Z"
+    timestamp: -1
+    bugs_caught:
+      - "Negative timestamp handling"
+      - "Pre-epoch dates"
+    safe_for_automation: true
+
+  y2k:
+    value: "2000-01-01T00:00:00Z"
+    bugs_caught:
+      - "Y2K date handling"
+    safe_for_automation: true
+
+  y2k38:
+    value: "2038-01-19T03:14:07Z"
+    timestamp: 2147483647
+    bugs_caught:
+      - "Y2K38 32-bit overflow"
+      - "Unix timestamp max"
+    safe_for_automation: true
+
+  y2k38_plus_1:
+    value: "2038-01-19T03:14:08Z"
+    timestamp: 2147483648
+    bugs_caught:
+      - "Y2K38 overflow"
+      - "32-bit signed integer overflow"
+    safe_for_automation: true
+
+  leap_year_feb_29:
+    value: "2024-02-29"
+    bugs_caught:
+      - "Leap year February 29"
+    safe_for_automation: true
+
+  non_leap_year_feb_28:
+    value: "2023-02-28"
+    bugs_caught:
+      - "Non-leap year February end"
+    safe_for_automation: true
+
+  century_non_leap:
+    value: "1900-02-28"
+    bugs_caught:
+      - "Century year not divisible by 400"
+      - "1900 was not a leap year"
+    safe_for_automation: true
+
+  century_leap:
+    value: "2000-02-29"
+    bugs_caught:
+      - "Century year divisible by 400"
+      - "2000 was a leap year"
+    safe_for_automation: true
+
+  month_31_days:
+    value: "2024-01-31"
+    bugs_caught:
+      - "31-day month end"
+    safe_for_automation: true
+
+  month_30_days:
+    value: "2024-04-30"
+    bugs_caught:
+      - "30-day month end"
+    safe_for_automation: true
+
+  year_end:
+    value: "2024-12-31T23:59:59Z"
+    bugs_caught:
+      - "Year end handling"
+      - "New Year rollover"
+    safe_for_automation: true
+
+  year_start:
+    value: "2024-01-01T00:00:00Z"
+    bugs_caught:
+      - "Year start handling"
+    safe_for_automation: true
+
+  far_future:
+    value: "9999-12-31T23:59:59Z"
+    bugs_caught:
+      - "Far future date handling"
+    safe_for_automation: true
+
+  far_past:
+    value: "0001-01-01T00:00:00Z"
+    bugs_caught:
+      - "Far past date handling"
+      - "Year 1 AD"
+    safe_for_automation: true
+
+  midnight:
+    value: "2024-06-15T00:00:00Z"
+    bugs_caught:
+      - "Midnight handling"
+      - "Day boundary"
+    safe_for_automation: true
+
+  end_of_day:
+    value: "2024-06-15T23:59:59Z"
+    bugs_caught:
+      - "End of day"
+      - "23:59:59 vs 24:00:00"
+    safe_for_automation: true
+
+  noon:
+    value: "2024-06-15T12:00:00Z"
+    bugs_caught:
+      - "Noon/12 PM handling"
+      - "AM/PM boundary"
+    safe_for_automation: true

@@ -1,0 +1,190 @@
+metadata:
+  version: "1.0.0"
+  last_updated: "2026-02-01"
+  source_urls: []
+
+category: strings
+subcategory: special-chars
+tier: T1
+
+bugs_caught:
+  - "Escape sequence handling"
+  - "Quote nesting failures"
+  - "Control character issues"
+  - "Delimiter confusion"
+
+values:
+  single_quote:
+    value: "'"
+    bugs_caught:
+      - "SQL injection setup"
+      - "Quote escaping failures"
+    safe_for_automation: true
+
+  double_quote:
+    value: "\""
+    bugs_caught:
+      - "JSON parsing issues"
+      - "Quote escaping failures"
+    safe_for_automation: true
+
+  backtick:
+    value: "`"
+    bugs_caught:
+      - "Template literal issues"
+      - "Shell command injection"
+    safe_for_automation: true
+
+  backslash:
+    value: "\\"
+    bugs_caught:
+      - "Escape sequence handling"
+      - "Path handling on Windows"
+    safe_for_automation: true
+
+  forward_slash:
+    value: "/"
+    bugs_caught:
+      - "Path delimiter handling"
+      - "URL parsing"
+    safe_for_automation: true
+
+  newline:
+    value: "\n"
+    bugs_caught:
+      - "Newline handling"
+      - "Log injection"
+    safe_for_automation: true
+
+  carriage_return:
+    value: "\r"
+    bugs_caught:
+      - "CR handling"
+      - "HTTP response splitting"
+    safe_for_automation: true
+
+  crlf:
+    value: "\r\n"
+    bugs_caught:
+      - "Windows line ending handling"
+      - "HTTP header injection"
+    safe_for_automation: true
+
+  tab:
+    value: "\t"
+    bugs_caught:
+      - "Tab character handling"
+      - "TSV parsing"
+    safe_for_automation: true
+
+  mixed_quotes:
+    value: "He said \"it's fine\""
+    bugs_caught:
+      - "Nested quote handling"
+      - "Escaping in context"
+    safe_for_automation: true
+
+  curly_braces:
+    value: "{}"
+    bugs_caught:
+      - "Template placeholder handling"
+      - "JSON structure confusion"
+    safe_for_automation: true
+
+  square_brackets:
+    value: "[]"
+    bugs_caught:
+      - "Array notation confusion"
+      - "Regex character class"
+    safe_for_automation: true
+
+  parentheses:
+    value: "()"
+    bugs_caught:
+      - "Function call parsing"
+      - "Regex grouping"
+    safe_for_automation: true
+
+  angle_brackets:
+    value: "<>"
+    bugs_caught:
+      - "HTML/XML parsing"
+      - "Comparison operator confusion"
+    safe_for_automation: true
+
+  ampersand:
+    value: "&"
+    bugs_caught:
+      - "HTML entity handling"
+      - "URL parameter delimiter"
+    safe_for_automation: true
+
+  pipe:
+    value: "|"
+    bugs_caught:
+      - "Command chaining"
+      - "Delimiter confusion"
+    safe_for_automation: true
+
+  semicolon:
+    value: ";"
+    bugs_caught:
+      - "Command termination"
+      - "CSV parsing"
+    safe_for_automation: true
+
+  dollar_sign:
+    value: "$"
+    bugs_caught:
+      - "Variable expansion"
+      - "Currency handling"
+    safe_for_automation: true
+
+  at_sign:
+    value: "@"
+    bugs_caught:
+      - "Email parsing"
+      - "Mention handling"
+    safe_for_automation: true
+
+  hash:
+    value: "#"
+    bugs_caught:
+      - "Comment handling"
+      - "Anchor/fragment parsing"
+    safe_for_automation: true
+
+  percent:
+    value: "%"
+    bugs_caught:
+      - "URL encoding"
+      - "Format string"
+    safe_for_automation: true
+
+  asterisk:
+    value: "*"
+    bugs_caught:
+      - "Wildcard handling"
+      - "Regex quantifier"
+    safe_for_automation: true
+
+  control_char_bell:
+    value: "\x07"
+    bugs_caught:
+      - "Bell character handling"
+      - "Terminal escape"
+    safe_for_automation: true
+
+  control_char_backspace:
+    value: "\x08"
+    bugs_caught:
+      - "Backspace handling"
+      - "Log spoofing"
+    safe_for_automation: true
+
+  control_char_escape:
+    value: "\x1B"
+    bugs_caught:
+      - "ANSI escape sequences"
+      - "Terminal injection"
+    safe_for_automation: true

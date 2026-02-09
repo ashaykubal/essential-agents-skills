@@ -1,0 +1,64 @@
+# Claude Code Status Line Configuration
+# Copy to ~/.claude-statusline/statusline.yaml to customize
+
+preset: developer
+
+# Line configuration (developer preset)
+lines:
+  line1:
+    segments: [model, context_gauge, token_counts]
+  line2:
+    segments: [last_file]
+  line3:
+    segments: [git_branch, pending_commits]
+
+# Color scheme (hex codes - converted to RGB escapes by script)
+colors:
+  # Gauge thresholds
+  gauge_low: "#AFFFAF"      # pastel green (<60%)
+  gauge_mid: "#FFF4B0"      # pastel yellow (60-70%)
+  gauge_high: "#FF9A96"     # pastel coral (>70%)
+  gauge_empty: "#585858"    # dim gray
+
+  # Model backgrounds
+  model_opus: "#C4ADED"     # soft purple
+  model_sonnet: "#ACD5F3"   # soft blue
+  model_haiku: "#ACEFD6"    # soft teal
+  model_fg: "#1E1E1E"       # dark text on pastel bg
+
+  # Segment colors
+  label: "#8A8A8A"          # medium gray
+  file_path: "#FFD7AF"      # pastel peach
+  git_branch: "#87D7FF"     # pastel cyan
+
+# Gauge appearance
+gauge:
+  width: 10
+  filled_char: "▰"
+  empty_char: "▱"
+  thresholds:
+    low: 60   # below this: green
+    high: 70  # above this: coral (between: yellow)
+
+# Preset definitions
+presets:
+  minimal:
+    lines:
+      line1:
+        segments: [model, context_gauge, token_counts]
+
+  developer:
+    lines:
+      line1:
+        segments: [model, context_gauge, token_counts]
+      line2:
+        segments: [last_file]
+      line3:
+        segments: [git_branch, pending_commits]
+
+  cost:
+    lines:
+      line1:
+        segments: [model, context_gauge, token_counts, cost]
+      line2:
+        segments: [duration]

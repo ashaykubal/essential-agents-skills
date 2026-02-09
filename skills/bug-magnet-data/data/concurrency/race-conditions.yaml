@@ -1,0 +1,118 @@
+metadata:
+  version: "1.0.0"
+  last_updated: "2026-02-01"
+  source_urls: []
+
+category: concurrency
+subcategory: race-conditions
+tier: T2
+type: scenario_pattern
+
+bugs_caught:
+  - "Race conditions"
+  - "Data corruption"
+  - "Lost updates"
+
+scenarios:
+  double_submit:
+    description: "User submits form twice rapidly"
+    setup: "Create pending transaction or form state"
+    action: "Submit same request 2x with <100ms delay"
+    expected_behavior: "Second request rejected or idempotent"
+    bugs_caught:
+      - "Duplicate records created"
+      - "Double charge/action"
+      - "Non-idempotent operations"
+    safe_for_automation: true
+
+  concurrent_edit:
+    description: "Two users edit same record simultaneously"
+    setup: "User A and B both load record #123"
+    action: "User A saves, then User B saves"
+    expected_behavior: "Conflict detection or last-write-wins"
+    bugs_caught:
+      - "Lost updates"
+      - "Data corruption"
+      - "No optimistic locking"
+    safe_for_automation: true
+
+  read_modify_write:
+    description: "Increment counter from multiple sources"
+    setup: "Counter at value 10"
+    action: "Two processes read 10, add 1, write 11"
+    expected_behavior: "Final value should be 12"
+    bugs_caught:
+      - "Non-atomic operations"
+      - "Counter drift"
+    safe_for_automation: true
+
+  check_then_act:
+    description: "File exists check before operation"
+    setup: "File may or may not exist"
+    action: "Check exists, then read/delete"
+    expected_behavior: "Handle file disappearing between check and act"
+    bugs_caught:
+      - "TOCTOU (time-of-check-time-of-use)"
+      - "File deleted between check and use"
+    safe_for_automation: true
+
+  lazy_initialization:
+    description: "Singleton or lazy init from multiple threads"
+    setup: "Uninitialized shared resource"
+    action: "Multiple threads trigger initialization"
+    expected_behavior: "Only one instance created"
+    bugs_caught:
+      - "Multiple singleton instances"
+      - "Initialization race"
+    safe_for_automation: true
+
+  cache_stampede:
+    description: "Cache expires while many requests arrive"
+    setup: "Cached value about to expire"
+    action: "Many requests hit as cache expires"
+    expected_behavior: "Only one backend call, others wait"
+    bugs_caught:
+      - "Thundering herd"
+      - "Backend overload"
+    safe_for_automation: true
+
+  publish_subscribe_ordering:
+    description: "Message ordering in pub/sub"
+    setup: "Subscriber expecting ordered events"
+    action: "Publisher sends A, B, C rapidly"
+    expected_behavior: "Subscriber receives A, B, C in order"
+    bugs_caught:
+      - "Out-of-order messages"
+      - "Lost messages"
+    safe_for_automation: true
+
+  connection_pool_exhaustion:
+    description: "All connections in use when new request arrives"
+    setup: "Pool at max capacity"
+    action: "New request needs connection"
+    expected_behavior: "Timeout or queue, not hang"
+    bugs_caught:
+      - "Deadlock"
+      - "Infinite wait"
+    safe_for_automation: true
+
+  transaction_isolation:
+    description: "Concurrent transactions reading/writing same data"
+    setup: "Transaction A reads, Transaction B writes"
+    action: "A reads again after B commits"
+    expected_behavior: "Consistent read based on isolation level"
+    bugs_caught:
+      - "Phantom reads"
+      - "Non-repeatable reads"
+      - "Dirty reads"
+    safe_for_automation: true
+
+  websocket_reconnect:
+    description: "Reconnection during active operation"
+    setup: "WebSocket connection active with pending request"
+    action: "Connection drops, client reconnects"
+    expected_behavior: "Pending operation handled correctly"
+    bugs_caught:
+      - "Lost requests"
+      - "Duplicate processing on retry"
+    safe_for_automation: true

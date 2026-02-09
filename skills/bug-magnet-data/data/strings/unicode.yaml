@@ -1,0 +1,139 @@
+metadata:
+  version: "1.0.0"
+  last_updated: "2026-02-01"
+  source_urls:
+    - "https://github.com/minimaxir/big-list-of-naughty-strings"
+
+category: strings
+subcategory: unicode
+tier: T1
+
+bugs_caught:
+  - "Multi-byte character handling"
+  - "Normalization mismatches"
+  - "String length calculation errors"
+  - "Display vs storage length mismatch"
+
+values:
+  null_character:
+    value: "hello\x00world"
+    bugs_caught:
+      - "C-string termination confusion"
+      - "Null byte injection"
+    safe_for_automation: true
+
+  zero_width_space:
+    value: "hello\u200Bworld"
+    bugs_caught:
+      - "Invisible character handling"
+      - "String comparison failures"
+    safe_for_automation: true
+
+  zero_width_joiner:
+    value: "hello\u200Dworld"
+    bugs_caught:
+      - "Zero-width joiner handling"
+    safe_for_automation: true
+
+  zero_width_non_joiner:
+    value: "hello\u200Cworld"
+    bugs_caught:
+      - "Zero-width non-joiner handling"
+    safe_for_automation: true
+
+  rtl_override:
+    value: "hello\u202Eworld"
+    bugs_caught:
+      - "RTL override injection"
+      - "Display spoofing"
+    safe_for_automation: true
+
+  bom_utf8:
+    value: "\uFEFFhello"
+    bugs_caught:
+      - "BOM handling"
+      - "Invisible prefix issues"
+    safe_for_automation: true
+
+  emoji_basic:
+    value: "hello 😀 world"
+    bugs_caught:
+      - "Emoji character handling"
+      - "Length calculation (1 emoji = multiple bytes)"
+    safe_for_automation: true
+
+  emoji_zwj_sequence:
+    value: "👨‍👩‍👧‍👦"
+    bugs_caught:
+      - "Complex emoji handling"
+      - "Grapheme cluster length"
+    safe_for_automation: true
+    note: "Family emoji - single grapheme, multiple codepoints"
+
+  emoji_skin_tone:
+    value: "👋🏽"
+    bugs_caught:
+      - "Skin tone modifier handling"
+    safe_for_automation: true
+
+  combining_characters:
+    value: "é"
+    bugs_caught:
+      - "Combining diacritical marks"
+      - "Normalization differences (NFC vs NFD)"
+    safe_for_automation: true
+    note: "e + combining acute accent"
+
+  lookalike_cyrillic_a:
+    value: "pаypal"
+    bugs_caught:
+      - "Homoglyph attacks"
+      - "Visual spoofing"
+    safe_for_automation: true
+    note: "Contains Cyrillic 'а' not Latin 'a'"
+
+  mixed_scripts:
+    value: "Tωτ@ℓ"
+    bugs_caught:
+      - "Mixed script detection"
+      - "Security filtering bypass"
+    safe_for_automation: true
+
+  fullwidth_chars:
+    value: "ｈｅｌｌｏ"
+    bugs_caught:
+      - "Fullwidth vs halfwidth handling"
+    safe_for_automation: true
+
+  superscript_digits:
+    value: "10²"
+    bugs_caught:
+      - "Superscript number handling"
+      - "Numeric parsing"
+    safe_for_automation: true
+
+  mathematical_symbols:
+    value: "x∈ℝ"
+    bugs_caught:
+      - "Mathematical symbol handling"
+    safe_for_automation: true
+
+  cjk_characters:
+    value: "你好世界"
+    bugs_caught:
+      - "CJK character handling"
+      - "Multi-byte length"
+    safe_for_automation: true
+
+  arabic_text:
+    value: "مرحبا"
+    bugs_caught:
+      - "RTL text handling"
+      - "Arabic character support"
+    safe_for_automation: true
+
+  hebrew_text:
+    value: "שלום"
+    bugs_caught:
+      - "Hebrew RTL handling"
+    safe_for_automation: true

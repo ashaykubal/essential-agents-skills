@@ -1,0 +1,182 @@
+metadata:
+  version: "1.0.0"
+  last_updated: "2026-02-01"
+  source_urls: []
+
+category: language-specific
+subcategory: javascript
+tier: T2
+
+bugs_caught:
+  - "JavaScript type coercion"
+  - "Equality comparison bugs"
+  - "Truthy/falsy confusion"
+
+values:
+  # Equality quirks
+  eq_vs_strict:
+    comparisons:
+      - expr: "0 == ''"
+        result: true
+      - expr: "0 === ''"
+        result: false
+    bugs_caught:
+      - "== vs === confusion"
+      - "Type coercion in comparison"
+    safe_for_automation: true
+
+  null_undefined_eq:
+    comparisons:
+      - expr: "null == undefined"
+        result: true
+      - expr: "null === undefined"
+        result: false
+    bugs_caught:
+      - "null/undefined equivalence"
+    safe_for_automation: true
+
+  array_comparison:
+    comparisons:
+      - expr: "[] == []"
+        result: false
+      - expr: "[] == false"
+        result: true
+      - expr: "[] == ''"
+        result: true
+    bugs_caught:
+      - "Array comparison by reference"
+      - "Array coercion"
+    safe_for_automation: true
+
+  object_comparison:
+    comparisons:
+      - expr: "{} == {}"
+        result: false
+      - expr: "{} == '[object Object]'"
+        result: false
+    bugs_caught:
+      - "Object comparison by reference"
+    safe_for_automation: true
+
+  # Type coercion
+  plus_operator:
+    expressions:
+      - expr: "'5' + 3"
+        result: "'53'"
+      - expr: "5 + '3'"
+        result: "'53'"
+      - expr: "5 - '3'"
+        result: 2
+    bugs_caught:
+      - "+ operator string coercion"
+      - "Inconsistent arithmetic"
+    safe_for_automation: true
+
+  array_to_number:
+    expressions:
+      - expr: "+[]"
+        result: 0
+      - expr: "+[1]"
+        result: 1
+      - expr: "+[1,2]"
+        result: "NaN"
+    bugs_caught:
+      - "Array coercion to number"
+    safe_for_automation: true
+
+  # Truthy/falsy edge cases
+  empty_array_truthy:
+    value: "[]"
+    truthy: true
+    bugs_caught:
+      - "Empty array is truthy"
+      - "Need length check"
+    safe_for_automation: true
+
+  empty_object_truthy:
+    value: "{}"
+    truthy: true
+    bugs_caught:
+      - "Empty object is truthy"
+      - "Need Object.keys check"
+    safe_for_automation: true
+
+  nan_falsy:
+    value: "NaN"
+    truthy: false
+    bugs_caught:
+      - "NaN is falsy"
+    safe_for_automation: true
+
+  # typeof quirks
+  typeof_null:
+    expr: "typeof null"
+    result: "'object'"
+    bugs_caught:
+      - "typeof null is 'object'"
+    safe_for_automation: true
+
+  typeof_array:
+    expr: "typeof []"
+    result: "'object'"
+    bugs_caught:
+      - "Arrays are 'object' not 'array'"
+    safe_for_automation: true
+
+  typeof_nan:
+    expr: "typeof NaN"
+    result: "'number'"
+    bugs_caught:
+      - "NaN is type 'number'"
+    safe_for_automation: true
+
+  # Array methods
+  array_sort_numeric:
+    expr: "[10, 2, 1].sort()"
+    result: "[1, 10, 2]"
+    bugs_caught:
+      - "Default sort is lexicographic"
+    safe_for_automation: true
+
+  array_includes_nan:
+    expr: "[NaN].includes(NaN)"
+    result: true
+    bugs_caught:
+      - "includes works with NaN"
+    safe_for_automation: true
+
+  array_indexof_nan:
+    expr: "[NaN].indexOf(NaN)"
+    result: -1
+    bugs_caught:
+      - "indexOf fails with NaN"
+    safe_for_automation: true
+
+  # Number edge cases
+  parseint_leading_zero:
+    expr: "parseInt('08')"
+    result: 8
+    bugs_caught:
+      - "parseInt octal (fixed in ES5)"
+    safe_for_automation: true
+
+  parsefloat_trailing:
+    expr: "parseFloat('3.14abc')"
+    result: 3.14
+    bugs_caught:
+      - "parseFloat ignores trailing chars"
+    safe_for_automation: true
+
+  number_constructor:
+    expressions:
+      - expr: "Number('')"
+        result: 0
+      - expr: "Number(' ')"
+        result: 0
+      - expr: "Number(null)"
+        result: 0
+      - expr: "Number(undefined)"
+        result: "NaN"
+    bugs_caught:
+      - "Number() edge cases"
+    safe_for_automation: true

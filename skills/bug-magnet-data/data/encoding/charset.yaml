@@ -1,0 +1,79 @@
+metadata:
+  version: "1.0.0"
+  last_updated: "2026-02-01"
+  source_urls: []
+
+category: encoding
+subcategory: charset
+tier: T2
+
+bugs_caught:
+  - "Character encoding detection"
+  - "BOM handling"
+  - "Mojibake"
+
+values:
+  utf8_bom:
+    value: "\xEF\xBB\xBFHello"
+    bugs_caught:
+      - "UTF-8 BOM handling"
+      - "Invisible prefix"
+    safe_for_automation: true
+    bytes: "EF BB BF 48 65 6C 6C 6F"
+
+  utf16_le_bom:
+    value: "\xFF\xFEH\x00e\x00l\x00l\x00o\x00"
+    bugs_caught:
+      - "UTF-16 LE detection"
+    safe_for_automation: true
+    bytes: "FF FE 48 00 65 00 6C 00 6C 00 6F 00"
+
+  utf16_be_bom:
+    value: "\xFE\xFF\x00H\x00e\x00l\x00l\x00o"
+    bugs_caught:
+      - "UTF-16 BE detection"
+    safe_for_automation: true
+    bytes: "FE FF 00 48 00 65 00 6C 00 6C 00 6F"
+
+  latin1_high:
+    value: "\xe9"
+    bugs_caught:
+      - "Latin-1 high byte (é)"
+      - "UTF-8 vs Latin-1 confusion"
+    safe_for_automation: true
+    note: "é in Latin-1, invalid UTF-8"
+
+  windows_1252:
+    value: "\x93\x94"
+    bugs_caught:
+      - "Windows smart quotes"
+      - "CP1252 vs Latin-1"
+    safe_for_automation: true
+    note: "Smart quotes in Windows-1252"
+
+  ascii_only:
+    value: "Hello World 123"
+    bugs_caught:
+      - "Pure ASCII handling"
+    safe_for_automation: true
+
+  high_ascii:
+    value: "\x80\x81\x82"
+    bugs_caught:
+      - "High ASCII bytes"
+      - "Extended ASCII handling"
+    safe_for_automation: true
+
+  mixed_valid_invalid:
+    value: "Hello\xFFWorld"
+    bugs_caught:
+      - "Invalid byte in string"
+      - "Replacement character handling"
+    safe_for_automation: true
+
+  null_byte_middle:
+    value: "Hello\x00World"
+    bugs_caught:
+      - "Null byte in string"
+      - "C-string truncation"
+    safe_for_automation: true

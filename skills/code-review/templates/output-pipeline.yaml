@@ -1,0 +1,100 @@
+# Output Template: Pipeline Stage
+#
+# Use this template when code-review is invoked as a pipeline stage
+# Only one section is run, findings scoped to that section
+
+security_review:  # or type_safety_review, lint_review, standards_review
+  # Metadata
+  timestamp: "2026-01-31T12:00:00Z"  # ISO 8601 format
+  section: security  # security | type_safety | linting | standards
+  framework: react  # Detected or overridden framework
+
+  # Files reviewed
+  files_reviewed:
+    - src/auth/token.ts
+    - src/api/users.ts
+
+  # Findings for this section only
+  findings:
+    - severity: critical  # critical | important | suggestion
+      confidence: verified  # verified | suspected
+      file: src/auth/token.ts
+      line: 45
+      column: 12  # Optional
+      pattern: sql_injection
+      owasp: "A03:2021-Injection"  # For security section
+      evidence: "User input from req.query.id flows to db.query() at line 45 without sanitization"
+      description: "User input concatenated into SQL query"
+      why: "Allows attacker to execute arbitrary SQL commands"
+      fix: "Use parameterized query: db.query('SELECT * FROM users WHERE id = ?', [userId])"
+
+    - severity: important
+      confidence: suspected
+      file: src/api/users.ts
+      line: 88
+      pattern: missing_auth_check
+      owasp: "A01:2021-Broken Access Control"
+      evidence: "Database query at line 88 with no preceding authorization check in function"
+      description: "Resource accessed without ownership verification"
+      why: "User could access resources belonging to other users"
+      fix: "Add ownership check: if (resource.ownerId !== currentUser.id) throw new ForbiddenError()"
+
+  # Summary for this section
+  summary: "1 critical and 1 important security finding. SQL injection requires immediate fix."
+
+  # Statistics
+  stats:
+    total_findings: 2
+    by_severity:
+      critical: 1
+      important: 1
+      suggestion: 0
+    by_confidence:
+      verified: 1
+      suspected: 1
+
+  # Pass/fail for pipeline gating
+  gate:
+    passed: false  # false if any critical findings
+    blocking_findings: 1  # Count of critical findings
+    recommendation: "Block merge until SQL injection is fixed"
+
+# ---
+# Alternative section examples:
+
+# type_safety_review:
+#   section: type_safety
+#   findings:
+#     - severity: important
+#       pattern: any_explicit
+#       file: src/api/handler.ts
+#       line: 25
+#       evidence: "Explicit any at line 25: 'function process(data: any)'"
+#       description: "Function parameter typed as any"
+#       fix: "Define interface for expected data shape"
+
+# lint_review:
+#   section: linting
+#   findings:
+#     - severity: suggestion
+#       pattern: deep_nesting
+#       file: src/utils/processor.ts
+#       line: 45
+#       metrics:
+#         nesting_depth: 5
+#         function_length: 85
+#       evidence: "5 levels of nesting at line 45-60"
+#       description: "Deeply nested conditional logic"
+#       fix: "Extract to helper functions or use early returns"
+
+# standards_review:
+#   section: standards
+#   findings:
+#     - severity: suggestion
+#       pattern: cs1_single_responsibility
+#       principle: "CS1"
+#       file: src/services/order.ts
+#       line: 10
+#       evidence: "Function processOrder handles validation, persistence, and notification"
+#       description: "Function has multiple responsibilities"
+#       fix: "Split into validateOrder, saveOrder, notifyOrder"

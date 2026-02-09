@@ -1,0 +1,89 @@
+metadata:
+  version: "1.0.0"
+  last_updated: "2026-02-01"
+  source_urls: []
+
+category: numbers
+subcategory: precision
+tier: T1
+
+bugs_caught:
+  - "Floating point comparison failures"
+  - "Rounding errors in calculations"
+  - "Currency calculation bugs"
+
+values:
+  classic_float_fail:
+    expression: "0.1 + 0.2"
+    expected: 0.3
+    actual: 0.30000000000000004
+    bugs_caught:
+      - "Direct float comparison"
+      - "Classic IEEE 754 demonstration"
+    safe_for_automation: true
+
+  float_subtraction:
+    expression: "0.3 - 0.1"
+    expected: 0.2
+    actual: 0.19999999999999998
+    bugs_caught:
+      - "Float subtraction precision"
+    safe_for_automation: true
+
+  currency_penny:
+    value: 0.01
+    bugs_caught:
+      - "Currency precision (use integers for cents)"
+    safe_for_automation: true
+
+  currency_calculation:
+    expression: "19.99 * 100"
+    expected: 1999
+    actual: 1998.9999999999998
+    bugs_caught:
+      - "Currency multiplication precision"
+    safe_for_automation: true
+
+  very_small:
+    value: 1e-300
+    bugs_caught:
+      - "Very small number handling"
+      - "Underflow risks"
+    safe_for_automation: true
+
+  very_large:
+    value: 1e300
+    bugs_caught:
+      - "Very large number handling"
+      - "Overflow risks"
+    safe_for_automation: true
+
+  recurring_decimal:
+    expression: "1 / 3"
+    bugs_caught:
+      - "Repeating decimal representation"
+    safe_for_automation: true
+
+  division_precision:
+    expression: "10 / 3 * 3"
+    expected: 10
+    actual: 9.999999999999998
+    bugs_caught:
+      - "Division-multiplication precision loss"
+    safe_for_automation: true
+
+  sum_many_small:
+    expression: "0.1 + 0.1 + 0.1 + 0.1 + 0.1 + 0.1 + 0.1 + 0.1 + 0.1 + 0.1"
+    expected: 1.0
+    actual: 0.9999999999999999
+    bugs_caught:
+      - "Accumulated rounding errors"
+    safe_for_automation: true
+
+  percentage_of_percentage:
+    expression: "100 * 0.7 * 0.7"
+    expected: 49
+    actual: 48.99999999999999
+    bugs_caught:
+      - "Compound percentage calculations"
+    safe_for_automation: true

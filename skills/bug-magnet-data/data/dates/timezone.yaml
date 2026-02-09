@@ -1,0 +1,118 @@
+metadata:
+  version: "1.0.0"
+  last_updated: "2026-02-01"
+  source_urls: []
+
+category: dates
+subcategory: timezone
+tier: T2
+
+bugs_caught:
+  - "Daylight saving time transitions"
+  - "UTC offset handling"
+  - "Timezone conversion errors"
+
+values:
+  utc:
+    value: "2024-06-15T12:00:00Z"
+    bugs_caught:
+      - "UTC handling"
+      - "Z suffix parsing"
+    safe_for_automation: true
+
+  positive_offset:
+    value: "2024-06-15T12:00:00+05:30"
+    bugs_caught:
+      - "Positive UTC offset"
+      - "India Standard Time"
+    safe_for_automation: true
+
+  negative_offset:
+    value: "2024-06-15T12:00:00-08:00"
+    bugs_caught:
+      - "Negative UTC offset"
+      - "Pacific Time"
+    safe_for_automation: true
+
+  max_positive_offset:
+    value: "2024-06-15T12:00:00+14:00"
+    bugs_caught:
+      - "Maximum positive offset"
+      - "Line Islands"
+    safe_for_automation: true
+
+  max_negative_offset:
+    value: "2024-06-15T12:00:00-12:00"
+    bugs_caught:
+      - "Maximum negative offset"
+      - "Baker Island"
+    safe_for_automation: true
+
+  half_hour_offset:
+    value: "2024-06-15T12:00:00+05:30"
+    bugs_caught:
+      - "Half-hour timezone"
+      - "India, Nepal, etc."
+    safe_for_automation: true
+
+  quarter_hour_offset:
+    value: "2024-06-15T12:00:00+05:45"
+    bugs_caught:
+      - "Quarter-hour timezone"
+      - "Nepal"
+    safe_for_automation: true
+
+  dst_spring_forward_us:
+    value: "2024-03-10T02:30:00"
+    timezone: "America/New_York"
+    bugs_caught:
+      - "DST spring forward"
+      - "Non-existent time"
+    safe_for_automation: true
+    note: "2:30 AM doesn't exist on this day in US"
+
+  dst_fall_back_us:
+    value: "2024-11-03T01:30:00"
+    timezone: "America/New_York"
+    bugs_caught:
+      - "DST fall back"
+      - "Ambiguous time"
+    safe_for_automation: true
+    note: "1:30 AM occurs twice on this day in US"
+
+  dst_spring_forward_eu:
+    value: "2024-03-31T02:30:00"
+    timezone: "Europe/London"
+    bugs_caught:
+      - "EU DST spring forward"
+    safe_for_automation: true
+
+  dst_fall_back_eu:
+    value: "2024-10-27T01:30:00"
+    timezone: "Europe/London"
+    bugs_caught:
+      - "EU DST fall back"
+    safe_for_automation: true
+
+  no_dst_timezone:
+    value: "2024-06-15T12:00:00"
+    timezone: "UTC"
+    bugs_caught:
+      - "No-DST timezone handling"
+    safe_for_automation: true
+
+  date_line_crossing:
+    value: "2024-06-15T23:00:00+12:00"
+    bugs_caught:
+      - "International Date Line"
+      - "Same instant, different dates"
+    safe_for_automation: true
+    note: "Same instant is 2024-06-16 in -12:00"
+
+  historical_tz_change:
+    value: "2011-12-29T23:59:59"
+    timezone: "Pacific/Apia"
+    bugs_caught:
+      - "Historical timezone change"
+      - "Samoa skipped Dec 30, 2011"
+    safe_for_automation: true

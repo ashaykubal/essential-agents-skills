@@ -1,0 +1,161 @@
+metadata:
+  version: "1.0.0"
+  last_updated: "2026-02-01"
+  source_urls: []
+
+category: numbers
+subcategory: boundaries
+tier: T0
+
+bugs_caught:
+  - "Integer overflow/underflow"
+  - "Off-by-one errors"
+  - "Division by zero"
+  - "Sign handling errors"
+
+values:
+  zero:
+    value: 0
+    bugs_caught:
+      - "Division by zero"
+      - "Zero-index edge cases"
+      - "Falsy value handling"
+    safe_for_automation: true
+
+  negative_one:
+    value: -1
+    bugs_caught:
+      - "Array index -1 handling"
+      - "Invalid count/size"
+      - "Error return value"
+    safe_for_automation: true
+
+  positive_one:
+    value: 1
+    bugs_caught:
+      - "Minimum positive handling"
+      - "Off-by-one at lower bound"
+    safe_for_automation: true
+
+  negative_zero:
+    value: -0
+    bugs_caught:
+      - "Signed zero handling"
+      - "Comparison with zero"
+    safe_for_automation: true
+    note: "In IEEE 754, -0 === 0 but 1/-0 === -Infinity"
+
+  # 32-bit integer boundaries
+  int32_max:
+    value: 2147483647
+    bugs_caught:
+      - "32-bit integer overflow"
+      - "INT_MAX handling"
+    safe_for_automation: true
+    note: "2^31 - 1"
+
+  int32_max_plus_1:
+    value: 2147483648
+    bugs_caught:
+      - "32-bit overflow to negative"
+    safe_for_automation: true
+    note: "2^31 - overflows to -2147483648 in signed 32-bit"
+
+  int32_min:
+    value: -2147483648
+    bugs_caught:
+      - "32-bit integer underflow"
+      - "INT_MIN handling"
+    safe_for_automation: true
+    note: "-2^31"
+
+  int32_min_minus_1:
+    value: -2147483649
+    bugs_caught:
+      - "32-bit underflow"
+    safe_for_automation: true
+
+  # 64-bit integer boundaries
+  int64_max:
+    value: 9223372036854775807
+    bugs_caught:
+      - "64-bit integer overflow"
+      - "LONG_MAX handling"
+    safe_for_automation: true
+    note: "2^63 - 1"
+
+  int64_min:
+    value: -9223372036854775808
+    bugs_caught:
+      - "64-bit integer underflow"
+      - "LONG_MIN handling"
+    safe_for_automation: true
+    note: "-2^63"
+
+  # Unsigned boundaries
+  uint32_max:
+    value: 4294967295
+    bugs_caught:
+      - "Unsigned 32-bit max"
+      - "UINT_MAX handling"
+    safe_for_automation: true
+    note: "2^32 - 1"
+
+  uint64_max:
+    value: 18446744073709551615
+    bugs_caught:
+      - "Unsigned 64-bit max"
+    safe_for_automation: true
+    note: "2^64 - 1"
+
+  # JavaScript safe integer
+  js_max_safe_int:
+    value: 9007199254740991
+    bugs_caught:
+      - "JavaScript precision loss"
+      - "Number.MAX_SAFE_INTEGER"
+    safe_for_automation: true
+    note: "2^53 - 1"
+
+  js_max_safe_int_plus_1:
+    value: 9007199254740992
+    bugs_caught:
+      - "JavaScript precision loss at boundary"
+    safe_for_automation: true
+    note: "2^53 - loses precision"
+
+  # Common business boundaries
+  hundred:
+    value: 100
+    bugs_caught:
+      - "Percentage boundary"
+      - "Hundred-based calculations"
+    safe_for_automation: true
+
+  thousand:
+    value: 1000
+    bugs_caught:
+      - "Thousand separator handling"
+    safe_for_automation: true
+
+  million:
+    value: 1000000
+    bugs_caught:
+      - "Large number display"
+    safe_for_automation: true
+
+  # Off-by-one patterns
+  power_of_2_minus_1:
+    value: 255
+    bugs_caught:
+      - "8-bit boundary"
+      - "Color value max"
+    safe_for_automation: true
+    note: "2^8 - 1"
+
+  power_of_2:
+    value: 256
+    bugs_caught:
+      - "8-bit overflow"
+    safe_for_automation: true
+    note: "2^8"

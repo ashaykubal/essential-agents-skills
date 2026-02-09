@@ -1,0 +1,187 @@
+metadata:
+  version: "1.0.0"
+  last_updated: "2026-02-01"
+  source_urls: []
+
+category: formats
+subcategory: json
+tier: T2
+
+bugs_caught:
+  - "JSON parsing errors"
+  - "Edge case handling"
+  - "Security issues"
+
+values:
+  # Valid edge cases
+  empty_object:
+    value: "{}"
+    valid: true
+    bugs_caught:
+      - "Empty object handling"
+    safe_for_automation: true
+
+  empty_array:
+    value: "[]"
+    valid: true
+    bugs_caught:
+      - "Empty array handling"
+    safe_for_automation: true
+
+  nested_deep:
+    value: "[[[[[[[[[[]]]]]]]]]]"
+    valid: true
+    bugs_caught:
+      - "Deep nesting"
+      - "Stack overflow"
+    safe_for_automation: true
+
+  large_number:
+    value: "{\"n\": 9999999999999999999999999999999}"
+    valid: true
+    bugs_caught:
+      - "Large number precision"
+    safe_for_automation: true
+
+  scientific_notation:
+    value: "{\"n\": 1e100}"
+    valid: true
+    bugs_caught:
+      - "Scientific notation"
+    safe_for_automation: true
+
+  negative_zero:
+    value: "{\"n\": -0}"
+    valid: true
+    bugs_caught:
+      - "Negative zero"
+    safe_for_automation: true
+
+  unicode_escape:
+    value: "{\"s\": \"\\u0041\"}"
+    valid: true
+    bugs_caught:
+      - "Unicode escape"
+    safe_for_automation: true
+
+  escaped_chars:
+    value: "{\"s\": \"\\\"\\\\\\n\\r\\t\"}"
+    valid: true
+    bugs_caught:
+      - "Escape sequence handling"
+    safe_for_automation: true
+
+  null_value:
+    value: "{\"n\": null}"
+    valid: true
+    bugs_caught:
+      - "JSON null handling"
+    safe_for_automation: true
+
+  boolean_values:
+    value: "{\"t\": true, \"f\": false}"
+    valid: true
+    bugs_caught:
+      - "Boolean handling"
+    safe_for_automation: true
+
+  # Invalid JSON
+  trailing_comma_object:
+    value: "{\"a\": 1,}"
+    valid: false
+    bugs_caught:
+      - "Trailing comma (invalid in JSON)"
+    safe_for_automation: true
+
+  trailing_comma_array:
+    value: "[1, 2, 3,]"
+    valid: false
+    bugs_caught:
+      - "Trailing comma array"
+    safe_for_automation: true
+
+  single_quotes:
+    value: "{'a': 1}"
+    valid: false
+    bugs_caught:
+      - "Single quotes (invalid JSON)"
+    safe_for_automation: true
+
+  unquoted_key:
+    value: "{a: 1}"
+    valid: false
+    bugs_caught:
+      - "Unquoted key (invalid JSON)"
+    safe_for_automation: true
+
+  comments:
+    value: "{\"a\": 1 /* comment */}"
+    valid: false
+    bugs_caught:
+      - "Comments (invalid JSON)"
+    safe_for_automation: true
+
+  undefined:
+    value: "{\"a\": undefined}"
+    valid: false
+    bugs_caught:
+      - "undefined (invalid JSON)"
+    safe_for_automation: true
+
+  nan:
+    value: "{\"a\": NaN}"
+    valid: false
+    bugs_caught:
+      - "NaN (invalid JSON)"
+    safe_for_automation: true
+
+  infinity:
+    value: "{\"a\": Infinity}"
+    valid: false
+    bugs_caught:
+      - "Infinity (invalid JSON)"
+    safe_for_automation: true
+
+  unclosed_object:
+    value: "{\"a\": 1"
+    valid: false
+    bugs_caught:
+      - "Unclosed object"
+    safe_for_automation: true
+
+  unclosed_array:
+    value: "[1, 2, 3"
+    valid: false
+    bugs_caught:
+      - "Unclosed array"
+    safe_for_automation: true
+
+  unclosed_string:
+    value: "{\"a\": \"hello}"
+    valid: false
+    bugs_caught:
+      - "Unclosed string"
+    safe_for_automation: true
+
+  empty:
+    value: ""
+    valid: false
+    bugs_caught:
+      - "Empty input"
+    safe_for_automation: true
+
+  whitespace_only:
+    value: "   "
+    valid: false
+    bugs_caught:
+      - "Whitespace only"
+    safe_for_automation: true
+
+  # Security concerns
+  proto_pollution:
+    value: "{\"__proto__\": {\"polluted\": true}}"
+    valid: true
+    bugs_caught:
+      - "Prototype pollution via JSON"
+    safe_for_automation: true
+    severity: security

@@ -1,0 +1,114 @@
+metadata:
+  version: "1.0.0"
+  last_updated: "2026-02-01"
+  source_urls: []
+
+category: collections
+subcategory: arrays
+tier: T0
+
+bugs_caught:
+  - "Index out of bounds"
+  - "Empty array handling"
+  - "Array mutation bugs"
+
+values:
+  empty:
+    value: []
+    bugs_caught:
+      - "Empty array iteration"
+      - "First/last element access on empty"
+      - "Reduce without initial value"
+    safe_for_automation: true
+
+  single_element:
+    value: ["only"]
+    bugs_caught:
+      - "Single element handling"
+      - "prev/next navigation edge"
+    safe_for_automation: true
+
+  two_elements:
+    value: ["first", "last"]
+    bugs_caught:
+      - "Two-element array"
+      - "First !== last distinction"
+    safe_for_automation: true
+
+  large_array:
+    value_template: "Array(10000).fill('item')"
+    bugs_caught:
+      - "Performance with large arrays"
+      - "Memory allocation"
+    safe_for_automation: true
+
+  nested_arrays:
+    value: [["a", "b"], ["c", "d"]]
+    bugs_caught:
+      - "Nested array handling"
+      - "Flattening operations"
+    safe_for_automation: true
+
+  deeply_nested:
+    value: [[[[["deep"]]]]]
+    bugs_caught:
+      - "Deep nesting handling"
+      - "Stack overflow on recursion"
+    safe_for_automation: true
+
+  mixed_types:
+    value: [1, "two", true, null, {"key": "value"}]
+    bugs_caught:
+      - "Mixed type array handling"
+      - "Type assumptions"
+    safe_for_automation: true
+
+  sparse_array:
+    value_template: "[1, , , 4]"
+    bugs_caught:
+      - "Sparse array holes"
+      - "undefined vs hole distinction"
+    safe_for_automation: true
+    note: "Array with holes (not undefined values)"
+
+  array_with_undefined:
+    value: [1, "undefined", 3]
+    bugs_caught:
+      - "Explicit undefined values"
+    safe_for_automation: true
+
+  array_with_null:
+    value: [1, null, 3]
+    bugs_caught:
+      - "Null values in array"
+      - "Filter/map with nulls"
+    safe_for_automation: true
+
+  duplicate_elements:
+    value: ["a", "b", "a", "c", "a"]
+    bugs_caught:
+      - "Duplicate handling"
+      - "Set conversion edge cases"
+    safe_for_automation: true
+
+  array_like:
+    value_template: "{0: 'a', 1: 'b', length: 2}"
+    bugs_caught:
+      - "Array-like object handling"
+      - "Array.from requirements"
+    safe_for_automation: true
+    note: "Object with numeric keys and length"
+
+  negative_index:
+    access: "arr[-1]"
+    bugs_caught:
+      - "Negative index access"
+      - "Language-specific behavior (Python vs JS)"
+    safe_for_automation: true
+
+  float_index:
+    access: "arr[1.5]"
+    bugs_caught:
+      - "Non-integer index"
+      - "Implicit truncation"
+    safe_for_automation: true

@@ -1,0 +1,208 @@
+metadata:
+  version: "1.0.0"
+  last_updated: "2026-02-01"
+  source_urls:
+    - "https://owasp.org/www-project-web-security-testing-guide/v42/6-Appendix/C-Fuzz_Vectors"
+
+category: strings
+subcategory: injection
+tier: T1
+severity: security
+
+bugs_caught:
+  - "SQL injection"
+  - "Cross-site scripting (XSS)"
+  - "Command injection"
+  - "Path traversal"
+
+values:
+  # SQL Injection - Safe for automation
+  sql_basic:
+    value: "' OR '1'='1"
+    bugs_caught:
+      - "SQL injection via string concatenation"
+    safe_for_automation: true
+    context_required: "Raw SQL queries"
+
+  sql_comment:
+    value: "' OR 1=1--"
+    bugs_caught:
+      - "SQL injection with comment"
+    safe_for_automation: true
+    context_required: "Raw SQL queries"
+
+  sql_union:
+    value: "' UNION SELECT NULL--"
+    bugs_caught:
+      - "SQL injection UNION attack"
+    safe_for_automation: true
+    context_required: "Raw SQL queries"
+
+  sql_stacked:
+    value: "'; SELECT 1--"
+    bugs_caught:
+      - "Stacked query injection"
+    safe_for_automation: true
+    context_required: "Raw SQL queries"
+
+  # SQL Injection - Destructive (manual only)
+  sql_drop:
+    value: "'; DROP TABLE users--"
+    bugs_caught:
+      - "SQL injection allowing data destruction"
+    safe_for_automation: false
+    manual_only: true
+    context_required: "Raw SQL queries"
+
+  sql_truncate:
+    value: "'; TRUNCATE TABLE users--"
+    bugs_caught:
+      - "SQL injection data deletion"
+    safe_for_automation: false
+    manual_only: true
+    context_required: "Raw SQL queries"
+
+  # XSS - Safe patterns
+  xss_script_tag:
+    value: "<script>alert('XSS')</script>"
+    bugs_caught:
+      - "Reflected XSS"
+      - "Unescaped output"
+    safe_for_automation: true
+    context_required: "HTML rendering"
+
+  xss_img_onerror:
+    value: "<img src=x onerror=alert('XSS')>"
+    bugs_caught:
+      - "Event handler XSS"
+    safe_for_automation: true
+    context_required: "HTML rendering"
+
+  xss_svg:
+    value: "<svg onload=alert('XSS')>"
+    bugs_caught:
+      - "SVG-based XSS"
+    safe_for_automation: true
+    context_required: "HTML rendering"
+
+  xss_href_javascript:
+    value: "javascript:alert('XSS')"
+    bugs_caught:
+      - "JavaScript protocol XSS"
+    safe_for_automation: true
+    context_required: "URL handling"
+
+  xss_data_uri:
+    value: "data:text/html,<script>alert('XSS')</script>"
+    bugs_caught:
+      - "Data URI XSS"
+    safe_for_automation: true
+    context_required: "URL handling"
+
+  xss_encoded:
+    value: "&lt;script&gt;alert('XSS')&lt;/script&gt;"
+    bugs_caught:
+      - "Double encoding XSS"
+    safe_for_automation: true
+    context_required: "HTML rendering"
+
+  # Command Injection - Safe for detection
+  cmd_semicolon:
+    value: "; echo vulnerable"
+    bugs_caught:
+      - "Command injection via semicolon"
+    safe_for_automation: true
+    context_required: "Shell execution"
+
+  cmd_pipe:
+    value: "| echo vulnerable"
+    bugs_caught:
+      - "Command injection via pipe"
+    safe_for_automation: true
+    context_required: "Shell execution"
+
+  cmd_backtick:
+    value: "`echo vulnerable`"
+    bugs_caught:
+      - "Command substitution injection"
+    safe_for_automation: true
+    context_required: "Shell execution"
+
+  cmd_dollar:
+    value: "$(echo vulnerable)"
+    bugs_caught:
+      - "Command substitution injection"
+    safe_for_automation: true
+    context_required: "Shell execution"
+
+  cmd_newline:
+    value: "foo\necho vulnerable"
+    bugs_caught:
+      - "Newline command injection"
+    safe_for_automation: true
+    context_required: "Shell execution"
+
+  # Command Injection - Destructive (manual only)
+  cmd_rm:
+    value: "; rm -rf /"
+    bugs_caught:
+      - "Destructive command injection"
+    safe_for_automation: false
+    manual_only: true
+    context_required: "Shell execution"
+
+  # Path Traversal
+  path_traversal_basic:
+    value: "../../../etc/passwd"
+    bugs_caught:
+      - "Path traversal"
+      - "Directory escape"
+    safe_for_automation: true
+
+  path_traversal_encoded:
+    value: "..%2F..%2F..%2Fetc%2Fpasswd"
+    bugs_caught:
+      - "URL-encoded path traversal"
+    safe_for_automation: true
+
+  path_traversal_double:
+    value: "....//....//etc/passwd"
+    bugs_caught:
+      - "Double-encoded path traversal"
+    safe_for_automation: true
+
+  path_traversal_null:
+    value: "../../../etc/passwd%00.jpg"
+    bugs_caught:
+      - "Null byte path traversal"
+    safe_for_automation: true
+
+  # LDAP Injection
+  ldap_wildcard:
+    value: "*"
+    bugs_caught:
+      - "LDAP wildcard injection"
+    safe_for_automation: true
+    context_required: "LDAP queries"
+
+  ldap_escape:
+    value: "*)(&"
+    bugs_caught:
+      - "LDAP filter injection"
+    safe_for_automation: true
+    context_required: "LDAP queries"
+
+  # XML/XXE
+  xml_entity:
+    value: "<!DOCTYPE foo [<!ENTITY xxe SYSTEM \"file:///etc/passwd\">]>"
+    bugs_caught:
+      - "XML external entity injection"
+    safe_for_automation: true
+    context_required: "XML parsing"
+
+  xml_billion_laughs:
+    value: "<!DOCTYPE lolz [<!ENTITY lol \"lol\">]>"
+    bugs_caught:
+      - "XML entity expansion DoS"
+    safe_for_automation: true
+    context_required: "XML parsing"

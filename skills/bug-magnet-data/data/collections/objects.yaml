@@ -1,0 +1,123 @@
+metadata:
+  version: "1.0.0"
+  last_updated: "2026-02-01"
+  source_urls: []
+
+category: collections
+subcategory: objects
+tier: T0
+
+bugs_caught:
+  - "Null reference on property access"
+  - "Prototype pollution"
+  - "Circular reference handling"
+
+values:
+  empty:
+    value: {}
+    bugs_caught:
+      - "Empty object handling"
+      - "Object.keys empty check"
+    safe_for_automation: true
+
+  single_property:
+    value: {"key": "value"}
+    bugs_caught:
+      - "Single property access"
+    safe_for_automation: true
+
+  nested:
+    value: {"a": {"b": {"c": "deep"}}}
+    bugs_caught:
+      - "Nested property access"
+      - "Optional chaining need"
+    safe_for_automation: true
+
+  deeply_nested:
+    value: {"l1": {"l2": {"l3": {"l4": {"l5": "value"}}}}}
+    bugs_caught:
+      - "Deep nesting handling"
+      - "Stack overflow on recursion"
+    safe_for_automation: true
+
+  null_value:
+    value: {"key": null}
+    bugs_caught:
+      - "Null property value"
+      - "hasOwnProperty vs truthy check"
+    safe_for_automation: true
+
+  undefined_value:
+    value: {"key": "undefined"}
+    bugs_caught:
+      - "Undefined property value"
+    safe_for_automation: true
+
+  numeric_keys:
+    value: {"0": "zero", "1": "one"}
+    bugs_caught:
+      - "Numeric string keys"
+      - "Array-like object confusion"
+    safe_for_automation: true
+
+  special_keys:
+    value: {"": "empty", " ": "space", "a.b": "dotted"}
+    bugs_caught:
+      - "Special key handling"
+      - "Dot notation failure"
+    safe_for_automation: true
+
+  # Prototype pollution vectors
+  proto_key:
+    value: {"__proto__": {"polluted": true}}
+    bugs_caught:
+      - "Prototype pollution"
+      - "__proto__ key handling"
+    safe_for_automation: true
+    severity: security
+
+  constructor_key:
+    value: {"constructor": {"prototype": {}}}
+    bugs_caught:
+      - "Constructor pollution"
+    safe_for_automation: true
+    severity: security
+
+  prototype_key:
+    value: {"prototype": {"polluted": true}}
+    bugs_caught:
+      - "Prototype key confusion"
+    safe_for_automation: true
+
+  # Special built-in keys
+  hasownproperty_key:
+    value: {"hasOwnProperty": "overwritten"}
+    bugs_caught:
+      - "Built-in method shadowing"
+    safe_for_automation: true
+
+  tostring_key:
+    value: {"toString": "not a function"}
+    bugs_caught:
+      - "toString override"
+      - "String coercion failure"
+    safe_for_automation: true
+
+  # Circular reference
+  circular:
+    value_template: "let obj = {}; obj.self = obj;"
+    bugs_caught:
+      - "Circular reference handling"
+      - "JSON.stringify failure"
+      - "Infinite recursion"
+    safe_for_automation: true
+    note: "Object containing reference to itself"
+
+  # Symbol keys
+  symbol_key:
+    value_template: "{[Symbol('key')]: 'value'}"
+    bugs_caught:
+      - "Symbol key enumeration"
+      - "Object.keys misses symbols"
+    safe_for_automation: true
+    note: "JavaScript Symbol as key"
