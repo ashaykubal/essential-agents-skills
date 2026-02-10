@@ -36,7 +36,7 @@ This agent is invoked via the **Task tool** by the orchestrator or statusline sk
 | Invocation Method | How to Use |
 |-------------------|------------|
 | **Orchestrator invokes** | `Task(subagent_type="statusline-setup", prompt="...")` |
-| **Skill invokes** | Called by `/statusline init` skill |
+| **Skill invokes** | Called by `/ez-statusline init` skill |
 
 ---
 

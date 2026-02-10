@@ -1,6 +1,6 @@
 ---
-name: statusline
-description: Configure the Claude Code status line. Supports init, preset switching, and customization.
+name: ez-statusline
+description: Configure a multi-line status bar for Claude Code. Supports init, preset switching, and customization.
 user-invocable: true
 tools:
   - Bash
@@ -8,16 +8,16 @@ tools:
   - Edit
 ---
 
-# Claude Code Status Line
+# EZ Status Line
 
-Configure the multi-line status line for Claude Code.
+Configure a multi-line status bar for Claude Code.
 
 ---
 
 ## When to Use
 
 Use this skill when:
-- Setting up the Claude Code status line for the first time (`init`)
+- Setting up the status line for the first time (`init`)
 - Switching between status line presets (`minimal`, `developer`, `cost`)
 - User asks to configure or customize the status line display
 
@@ -29,7 +29,7 @@ This skill can be invoked two ways:
 
 | Method | Example |
 |--------|---------|
-| **Command** | `/statusline minimal` |
+| **Command** | `/ez-statusline minimal` |
 | **Conversational** | "Change my status line to minimal" |
 
 When invoked, **you (Claude) execute the steps** using the tools declared above (Bash, Read, Edit).
@@ -39,10 +39,10 @@ When invoked, **you (Claude) execute the steps** using the tools declared above 
 ## Usage
 
 ```
-/statusline init        # Install with default (developer) preset
-/statusline minimal     # Switch to minimal preset (1 line)
-/statusline developer   # Switch to developer preset (3 lines)
-/statusline cost        # Switch to cost preset (2 lines)
+/ez-statusline init        # Install with default (developer) preset
+/ez-statusline minimal     # Switch to minimal preset (1 line)
+/ez-statusline developer   # Switch to developer preset (3 lines)
+/ez-statusline cost        # Switch to cost preset (2 lines)
 ```
 
 ### Argument Handling
@@ -50,9 +50,9 @@ When invoked, **you (Claude) execute the steps** using the tools declared above 
 The subcommand is passed via `$1`:
 
 ```
-/statusline init
-             ^^^^
-             $1 = "init"
+/ez-statusline init
+               ^^^^
+               $1 = "init"
 ```
 
 Parse `$1` and execute the corresponding subcommand below.
@@ -61,7 +61,7 @@ Parse `$1` and execute the corresponding subcommand below.
 
 ## Subcommand: init
 
-Install the Claude Code status line for first-time setup.
+Install the status line for first-time setup.
 
 **Execute these steps:**
 
@@ -72,17 +72,16 @@ Install the Claude Code status line for first-time setup.
 
 2. **Bash**: Copy default config template
    ```bash
-   cp "skills/statusline/templates/statusline-default.yaml" ~/.claude-statusline/statusline.yaml
+   cp ".claude/skills/ez-statusline/templates/statusline-default.yaml" ~/.claude-statusline/statusline.yaml
    ```
 
-3. **Read**: Check if `.claude/settings.json` exists, then **Edit** to add the statusLine block:
-   ```json
-   {
-     "statusLine": {
-       "type": "command",
-       "command": "scripts/statusline/statusline.sh"
-     }
-   }
+3. **Spawn statusline-setup agent** to update settings.json:
+   ```
+   Task(subagent_type="statusline-setup", prompt="
+     GOAL: Add statusLine configuration to .claude/settings.json
+     SCRIPT_PATH: .claude/skills/ez-statusline/scripts/statusline.sh
+     TARGET: .claude/settings.json (project level)
+   ")
    ```
 
 4. **Display to user**: "Status line installed. Restart session to activate."
@@ -139,8 +138,8 @@ Switch to cost preset (2 lines).
 | File | Purpose |
 |------|---------|
 | `~/.claude-statusline/statusline.yaml` | User config (presets, colors) |
-| `scripts/statusline/statusline.sh` | Main script |
-| `skills/statusline/templates/statusline-default.yaml` | Default config template |
+| `.claude/skills/ez-statusline/scripts/statusline.sh` | Main script (bundled with skill) |
+| `.claude/skills/ez-statusline/templates/statusline-default.yaml` | Default config template |
 
 ---
 
@@ -150,3 +149,4 @@ Switch to cost preset (2 lines).
 - Multi-line output is supported
 - Colors use RGB escape codes for exact hex values
 - Gauge and percentage colors match threshold (green/yellow/coral)
+- Requires `jq` for JSON parsing and optionally `git` for branch display

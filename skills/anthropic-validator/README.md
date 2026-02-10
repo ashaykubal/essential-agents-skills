@@ -20,7 +20,7 @@ Run without arguments to validate the current project's assets.
 
 ## Required Agents
 
-This skill spawns the `standards-reviewer` agent (included in `agents/standards-reviewer.md`). Make sure the agent file is installed in your project's `agents/` directory.
+This skill spawns the `standards-reviewer` agent (included in `agents/standards-reviewer.md`). Install the agent file to your project's `.claude/agents/` directory.
 
 ## Dependencies
 
@@ -35,7 +35,8 @@ Copy this skill folder and its dependencies into your project:
 cp -r skills/anthropic-validator /path/to/project/.claude/skills/
 cp -r skills/subagent-prompting /path/to/project/.claude/skills/
 cp -r skills/subagent-output-templating /path/to/project/.claude/skills/
-cp agents/standards-reviewer.md /path/to/project/agents/
+mkdir -p /path/to/project/.claude/agents
+cp agents/standards-reviewer.md /path/to/project/.claude/agents/
 ```
 
 ## Origin

@@ -1,20 +1,20 @@
-# Statusline
+# EZ Statusline
 
 A multi-line status display for Claude Code that shows context window usage, model info, last modified file, and git status, right in your terminal. Uses pastel RGB colors and a visual gauge bar that shifts from green to yellow to coral as your context fills up.
 
 ## Quick Start
 
 ```
-/statusline init
+/ez-statusline init
 ```
 
-This copies the config template, installs the status script, and updates your Claude Code settings.
+This copies the config template, updates your Claude Code settings, and wires up the status script.
 
 Switch presets:
 ```
-/statusline minimal
-/statusline developer
-/statusline cost
+/ez-statusline minimal
+/ez-statusline developer
+/ez-statusline cost
 ```
 
 ## What It Does
@@ -27,7 +27,7 @@ Switch presets:
 
 ## Required Agents
 
-This skill uses the `statusline-setup` agent (included in `agents/statusline-setup.md`) to safely update your Claude Code `settings.json`. Make sure the agent file is installed in your project's `agents/` directory.
+This skill uses the `statusline-setup` agent (included in `agents/statusline-setup.md`) to safely update your Claude Code `settings.json`. Install the agent file to your project's `.claude/agents/` directory.
 
 ## Dependencies
 
@@ -35,25 +35,24 @@ None beyond the bundled script and config template.
 
 ## External Requirements
 
-- `jq` — required for JSON parsing (install via your package manager)
-- `git` — optional, used for branch/commit display (degrades gracefully without it)
+- `jq` -- required for JSON parsing (install via your package manager)
+- `git` -- optional, used for branch/commit display (degrades gracefully without it)
 
 ## Installation
 
 ```bash
-# Skill
-cp -r skills/statusline /path/to/project/.claude/skills/
+# Skill (includes script and config template)
+cp -r skills/ez-statusline /path/to/project/.claude/skills/
 
 # Agent
-cp agents/statusline-setup.md /path/to/project/agents/
+mkdir -p /path/to/project/.claude/agents
+cp agents/statusline-setup.md /path/to/project/.claude/agents/
 
-# Script (must be executable)
-mkdir -p /path/to/project/scripts/statusline
-cp scripts/statusline/statusline.sh /path/to/project/scripts/statusline/
-chmod +x /path/to/project/scripts/statusline/statusline.sh
+# Make script executable
+chmod +x /path/to/project/.claude/skills/ez-statusline/scripts/statusline.sh
 ```
 
-Then run `/statusline init` to complete setup.
+Then run `/ez-statusline init` to complete setup.
 
 ## Known Limitations
 

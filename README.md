@@ -2,7 +2,7 @@
 
 Production-grade agents and skills for AI-assisted development. These tools enforce code quality, catch test suite problems, validate assets against standards, and improve multi-agent workflows.
 
-Each skill is a self-contained markdown file that plugs into any project's `.claude/skills/` directory. Agents go in `agents/`.
+Each skill is a self-contained markdown file that plugs into any project's `.claude/skills/` directory. Agents go in `.claude/agents/`.
 
 ## Skills
 
@@ -14,7 +14,7 @@ Each skill is a self-contained markdown file that plugs into any project's `.cla
 | [code-review](skills/code-review/) | Structured review across security, type safety, linting, and coding standards using 4 parallel agents | `/code-review [path]` |
 | [test-audit](skills/test-audit/) | Finds tests that mock the system under test, assert on calls instead of output, or fake external dependencies | `/test-audit [path]` |
 | [session-handoff](skills/session-handoff/) | Generates a handoff document with progress, decisions, and next steps for the following session | `/session-handoff` |
-| [statusline](skills/statusline/) | Multi-line terminal status bar with context gauge, model badge, git info, and preset switching | `/statusline init` |
+| [ez-statusline](skills/ez-statusline/) | Multi-line terminal status bar with context gauge, model badge, git info, and preset switching | `/ez-statusline init` |
 
 ### Internal (loaded by other skills)
 
@@ -33,7 +33,7 @@ Each skill is a self-contained markdown file that plugs into any project's `.cla
 | Agent | What it does | Used by |
 |-------|-------------|---------|
 | [standards-reviewer](agents/standards-reviewer.md) | Critical analysis of assets against standards, produces severity-rated findings | anthropic-validator |
-| [statusline-setup](agents/statusline-setup.md) | Safely updates Claude Code settings.json with statusline configuration | statusline |
+| [statusline-setup](agents/statusline-setup.md) | Safely updates Claude Code settings.json with statusline configuration | ez-statusline |
 
 ## Dependency map
 
@@ -54,7 +54,7 @@ code-review
   ├── subagent-prompting
   └── subagent-output-templating
 
-statusline
+ez-statusline
   └── statusline-setup (agent)
 
 session-handoff          (standalone)
@@ -69,9 +69,15 @@ subagent-output-templating (standalone)
 Copy everything into your project:
 
 ```bash
-cp -r skills/ /path/to/project/.claude/skills/
-cp -r agents/ /path/to/project/agents/
-cp -r scripts/ /path/to/project/scripts/
+# Skills
+cp -r skills/* /path/to/project/.claude/skills/
+
+# Agents
+mkdir -p /path/to/project/.claude/agents
+cp agents/*.md /path/to/project/.claude/agents/
+
+# Make statusline script executable
+chmod +x /path/to/project/.claude/skills/ez-statusline/scripts/statusline.sh
 ```
 
 ### Individual skills
