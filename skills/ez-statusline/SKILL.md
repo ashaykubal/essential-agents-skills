@@ -79,8 +79,18 @@ Install the status line for first-time setup.
    ```
    Task(subagent_type="statusline-setup", prompt="
      GOAL: Add statusLine configuration to .claude/settings.json
-     SCRIPT_PATH: .claude/skills/ez-statusline/scripts/statusline.sh
      TARGET: .claude/settings.json (project level)
+
+     EXACT JSON to add at top level of settings.json:
+     {
+       \"statusLine\": {
+         \"type\": \"command\",
+         \"command\": \".claude/skills/ez-statusline/scripts/statusline.sh\"
+       }
+     }
+
+     If .claude/settings.json does not exist, create it with just this content.
+     If it exists, merge the statusLine key into the existing JSON, preserving all other keys.
    ")
    ```
 
