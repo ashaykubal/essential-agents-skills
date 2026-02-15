@@ -1,0 +1,49 @@
+# Diagnostic Output Schema
+# Written by the synthesis sub-agent to logs/diagnostics/test-audit-{YYYYMMDD-HHMMSS}.yaml
+
+diagnostic:
+  skill: test-audit
+  timestamp: "{ISO-8601}"
+  model: sonnet
+
+mode_selection:
+  mode: deep | scale
+  file_count: 5
+  threshold: 5
+  threshold_source: default | override
+  safety_cap_triggered: false
+
+stage_0_ast:
+  verify_count: success | failed
+  skip_detect: success | failed
+  ast_analyze: success | failed
+  graceful_degradation: false
+  degradation_details: ""
+
+execution:
+  stages_completed: 3
+  stages_skipped: ["classification"]  # Deep mode skips classification
+  total_tool_calls: 12
+  classification_source: logs/test-classification-{ts}.yaml | "N/A (deep mode)"
+  detection_source: logs/mock-detection-{ts}.yaml
+
+gate_evaluation:
+  gate_1_check: true
+  gate_1_result: "triggered (2 P0 violations)"
+  gate_2_check: false
+  gate_2_result: "not evaluated (Gate 1 triggered)"
+
+decisions:
+  - file: tests/proxy.test.ts
+    decision: rewrite_required
+    reason: "P0 violation (T1) - false confidence"
+    effectiveness: 16%
+    verification_lines_source: ast  # ast or heuristic
+
+  - file: tests/config.test.ts
+    decision: advisory_only
+    reason: "P1 violation but 98% effectiveness >= 95% threshold"
+    effectiveness: 98%
+    verification_lines_source: ast
+
+errors: []

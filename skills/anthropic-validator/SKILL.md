@@ -36,7 +36,7 @@ This skill uses **Main Context Orchestration** - you (Claude) follow the instruc
 │  2. Follow section instructions for asset type              │
 │  3. Spawn claude-code-guide → fetch latest standards        │
 │  4. Read output (direct response)                           │
-│  5. Spawn standards-reviewer → analyze asset                │
+│  5. Spawn bulwark-standards-reviewer → analyze asset        │
 │  6. Read validation report from logs/validations/           │
 │  7. Present summary to user                                 │
 │                                                             │
@@ -154,7 +154,7 @@ IF asset_type == "skill":
 
 ### Step 3: Critical Analysis
 
-Spawn `standards-reviewer` agent (Task tool with `subagent_type: standards-reviewer`):
+Spawn `bulwark-standards-reviewer` agent (Task tool with `subagent_type: bulwark-standards-reviewer`):
 
 ```
 GOAL: Critically analyze {asset_path} against fetched standards
@@ -203,7 +203,7 @@ https://docs.anthropic.com/en/docs/claude-code/skills
    Fetch current standards for Claude Code skills from https://docs.anthropic.com/en/docs/claude-code/skills
    Focus on: frontmatter fields, SKILL.md structure, user-invocable, agent field, context field
    ```
-5. Spawn `standards-reviewer` with:
+5. Spawn `bulwark-standards-reviewer` with:
    - Skill content
    - Fetched standards
    - **Supporting files inventory** (list of files in references/, examples/, etc.)
@@ -244,7 +244,7 @@ https://docs.anthropic.com/en/docs/claude-code/hooks
    Fetch current standards for Claude Code hooks from https://docs.anthropic.com/en/docs/claude-code/hooks
    Focus on: hook types, matcher patterns, once field, command format, environment variables
    ```
-3. Spawn `standards-reviewer` with hooks content and fetched standards
+3. Spawn `bulwark-standards-reviewer` with hooks content and fetched standards
 4. Write report to `logs/validations/`
 
 ### Key Validation Points
@@ -287,7 +287,7 @@ https://docs.anthropic.com/en/docs/claude-code/sub-agents
    Fetch current standards for Claude Code custom sub-agents from https://docs.anthropic.com/en/docs/claude-code/sub-agents
    Focus on: agent definition format, frontmatter fields, model selection, tools array, lookup priority
    ```
-3. Spawn `standards-reviewer` with agent content and fetched standards
+3. Spawn `bulwark-standards-reviewer` with agent content and fetched standards
 4. Write report to `logs/validations/`
 
 ### Key Validation Points
@@ -330,7 +330,7 @@ https://docs.anthropic.com/en/docs/claude-code/skills (commands merged with skil
    Focus on: command invocation, argument passing ($ARGUMENTS, $1, $2), user-invocable field
    Note: Commands and skills merged in v2.1.3
    ```
-3. Spawn `standards-reviewer` with command content and fetched standards
+3. Spawn `bulwark-standards-reviewer` with command content and fetched standards
 4. Write report to `logs/validations/`
 
 ### Key Validation Points
@@ -362,7 +362,7 @@ https://docs.anthropic.com/en/docs/claude-code/mcp
    Fetch current standards for Claude Code MCP servers from https://docs.anthropic.com/en/docs/claude-code/mcp
    Focus on: server configuration, tool definitions, transport types, security considerations
    ```
-3. Spawn `standards-reviewer` with MCP content and fetched standards
+3. Spawn `bulwark-standards-reviewer` with MCP content and fetched standards
 4. Write report to `logs/validations/`
 
 ### Key Validation Points
@@ -394,7 +394,7 @@ https://docs.anthropic.com/en/docs/claude-code/plugins
    Fetch current standards for Claude Code plugins from https://docs.anthropic.com/en/docs/claude-code/plugins
    Focus on: plugin.json manifest, directory structure, registration, flat skills directory
    ```
-3. Spawn `standards-reviewer` with plugin content and fetched standards
+3. Spawn `bulwark-standards-reviewer` with plugin content and fetched standards
 4. Write report to `logs/validations/`
 
 ### Key Validation Points
@@ -430,7 +430,7 @@ When validating a directory:
 1. **Glob** all matching files based on asset type patterns
 2. **For each asset INDIVIDUALLY**:
    - Run the FULL single-asset validation workflow (Steps 1-4)
-   - Spawn `standards-reviewer` with ONLY that one asset
+   - Spawn `bulwark-standards-reviewer` with ONLY that one asset
    - Write individual report to `logs/validations/`
    - **DO NOT** combine multiple assets into one reviewer context
 3. **After all assets validated**, aggregate results into summary report
@@ -478,7 +478,7 @@ validation_report:
     asset: "{file_path}"
     asset_type: skill | hook | agent | command | mcp | plugin
     timestamp: "{ISO-8601}"
-    validator: "standards-reviewer"
+    validator: "bulwark-standards-reviewer"
     standards_source: fetched | fallback
 
   findings:
@@ -574,7 +574,7 @@ diagnostic:
       success: true | false
       fallback_used: true | false
     analysis:
-      agent: standards-reviewer
+      agent: bulwark-standards-reviewer
       findings_count: 0
 
   output:
@@ -586,12 +586,10 @@ diagnostic:
 
 ## Related Skills
 
-- `subagent-prompting` - 4-part template for agent invocation
-- `subagent-output-templating` - Output format for logs
+- `subagent-prompting` (P0.1) - 4-part template for agent invocation
+- `subagent-output-templating` (P0.2) - Output format for logs
 
 ## Related Agents
 
-- `standards-reviewer` - Critical analysis agent (invoked by this skill)
+- `bulwark-standards-reviewer` - Critical analysis agent (invoked by this skill)
 - `claude-code-guide` - Built-in agent for documentation fetching
-
-> **Note:** Additional pipeline orchestration available in [The Bulwark](https://github.com/ashaykubal/the-bulwark) framework.

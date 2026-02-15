@@ -1,0 +1,100 @@
+# Audit Output Schema
+# Used by the synthesis sub-agent (Stage 3) to structure the final audit report.
+
+metadata:
+  skill: test-audit
+  timestamp: "{ISO-8601}"
+  mode: deep | scale
+  threshold: 5
+  sources:
+    classification: logs/test-classification-{YYYYMMDD-HHMMSS}.yaml | "N/A (deep mode)"
+    detection: logs/mock-detection-{YYYYMMDD-HHMMSS}.yaml
+    ast_verify_count: /tmp/claude/ast-verify-count.json
+    ast_skip_detect: /tmp/claude/ast-skip-detect.json
+    ast_data_flow: /tmp/claude/ast-data-flow.json
+  model: sonnet
+
+audit:
+  overview:
+    total_files: 25
+    files_analyzed: 5
+    total_verification_lines: 1250
+    total_affected_lines: 154
+    overall_effectiveness: 88%
+
+  file_analysis:
+    - file: tests/proxy.test.ts
+      verification_lines: 95
+      affected_lines: 80
+      test_effectiveness: 16%
+      priority: P0
+      violations: [T1]
+      impact: "False confidence - spawn mock hides startup failures"
+      rewrite_direction: |
+        Use real child_process.spawn(). Verify with port check.
+        Test should actually start proxy and verify it's listening.
+
+    - file: tests/workflow.integration.ts
+      verification_lines: 50
+      affected_lines: 36
+      test_effectiveness: 28%
+      priority: P0
+      violations: [T3+]
+      impact: "False confidence - broken integration chain"
+      rewrite_direction: |
+        Chain real function outputs. Remove mock data injection.
+        Replace mockOrderData with: const order = await createOrder(input);
+
+    - file: tests/api.integration.ts
+      verification_lines: 55
+      affected_lines: 37
+      test_effectiveness: 33%
+      priority: P1
+      violations: [T3]
+      impact: "Incomplete verification - mocked HTTP"
+      rewrite_direction: |
+        Use MSW or test server instead of jest.mock('node-fetch').
+        Test should verify actual HTTP request/response cycle.
+
+    - file: tests/config.test.ts
+      verification_lines: 40
+      affected_lines: 1
+      test_effectiveness: 98%
+      priority: P1
+      violations: [T2]
+      impact: "Incomplete verification - call-only assertion"
+      rewrite_direction: |
+        Add result assertion after toHaveBeenCalled().
+        Verify the actual saved value matches expected.
+
+  recommendations:
+    - "Establish test harness for proxy testing"
+    - "Create shared fixtures for integration tests"
+    - "Consider test utilities for common verification patterns"
+
+directive:
+  REWRITE_REQUIRED: true
+  gate_triggered: "Gate 1: Impact (P0 violations exist)"
+  files_to_rewrite:
+    - path: tests/proxy.test.ts
+      priority: P0
+      test_effectiveness: 16%
+    - path: tests/workflow.integration.ts
+      priority: P0
+      test_effectiveness: 28%
+    - path: tests/api.integration.ts
+      priority: P1
+      test_effectiveness: 33%
+  files_advisory:
+    - path: tests/config.test.ts
+      priority: P1
+      test_effectiveness: 98%
+      reason: "Above 95% threshold - advisory only"
+  threshold: 95%
+  rationale: "Gate 1 triggered: 2 P0 violations (false confidence). Gate 2 would also trigger: 1 P1 file below threshold."
+
+summary: |
+  Audit complete: 5 files analyzed, 4 with violations.
+  REWRITE_REQUIRED: true (Gate 1 - P0 violations)
+  Priority rewrites: proxy.test.ts (P0, 16%), workflow.integration.ts (P0, 28%), api.integration.ts (P1, 33%)
+  Advisory: config.test.ts (P1, 98% - above threshold)

@@ -32,7 +32,7 @@ Prompt template for surface-level test classification and triage. Designed for a
 This skill provides the **first stage** prompt template:
 
 ```
-test-audit orchestrates:
+test-audit (P0.8) orchestrates:
   Stage 1: test-classification (Haiku) → classification YAML
   Stage 2: mock-detection (Sonnet) → violations YAML
   Stage 3: synthesis (Sonnet) → audit report
@@ -54,7 +54,8 @@ Classify all test files in `{target}` by type and flag files needing deep analys
 - Classify every test file found
 - Use filename-first classification (content validates)
 - Flag mock+integration mismatches for deep analysis
-- Count verification lines per file (excluding boilerplate)
+- Use AST verification_lines as ground truth when provided in context (do NOT re-count).
+  Only fall back to manual counting if AST data is unavailable.
 - Complete within 30 tool calls
 
 ### CONTEXT
@@ -68,6 +69,9 @@ Classify all test files in `{target}` by type and flag files needing deep analys
 **Deep analysis triggers:** See "needs_deep_analysis Triggers" section below
 
 **Line counting rules:** See "Verification Line Counting" section below
+
+**AST verification_lines (MANDATORY when available):**
+If the orchestrator provides `ast_verification_lines` per file, use that value directly as `verification_lines` in the output. Do NOT override with your own count. The AST value is deterministic and precise; heuristic counting at scale is error-prone.
 
 ### OUTPUT
 
@@ -133,7 +137,7 @@ Flag a file for deep analysis when ANY of these conditions are met:
 
 ## Verification Line Counting
 
-Count "verification lines" per file for test effectiveness calculation. This count is used by mock-detection to calculate how many effective test lines remain after violations are identified.
+Count "verification lines" per file for test effectiveness calculation. This count is used by P0.7 to calculate how many effective test lines remain after violations are identified.
 
 ### Exclude from Count
 
@@ -149,7 +153,7 @@ Count "verification lines" per file for test effectiveness calculation. This cou
 ### Include in Count
 
 - Actual test logic (assertions, function calls, variable assignments within tests)
-- Mock setup lines (these may be marked as violation scope by mock-detection)
+- Mock setup lines (these may be marked as violation scope by P0.7)
 - Assertion statements (`expect(`, `assert`, `should`)
 - Setup code within test bodies
 
@@ -168,7 +172,7 @@ files:
   - path: tests/proxy.test.ts
     category: unit
     total_lines: 150
-    verification_lines: 95
+    verification_lines: 95   # Use ast_verification_lines if provided; only count manually if unavailable
     mock_indicators:
       - "jest.spyOn(child_process, 'spawn')"
     needs_deep_analysis: true
@@ -244,7 +248,7 @@ errors: []
 
 ### Orchestrator Usage
 
-The orchestrator (test-audit) constructs the full prompt by:
+The orchestrator (P0.8) constructs the full prompt by:
 
 1. Loading this skill content
 2. Substituting `{target}` with user-provided path or inferred target
@@ -253,7 +257,7 @@ The orchestrator (test-audit) constructs the full prompt by:
 
 ### Downstream Usage
 
-mock-detection receives:
+P0.7 (mock-detection) receives:
 - List of files with `needs_deep_analysis: true`
 - `verification_lines` count per file (for effectiveness calculation)
 - `mock_indicators` as starting points for deep analysis
@@ -301,5 +305,6 @@ Read all outputs after completion, then merge.
 
 ## Related Skills
 
-- `mock-detection` - Deep analysis of flagged files
-- `test-audit` - Orchestration and synthesis
+- `mock-detection` (P0.7) - Deep analysis of flagged files
+- `test-audit` (P0.8) - Orchestration and synthesis
+- `pipeline-templates` (P0.3) - Test Audit pipeline definition

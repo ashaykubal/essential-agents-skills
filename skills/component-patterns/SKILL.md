@@ -14,7 +14,7 @@ test real behavior for CLIs, servers, parsers, processes, databases, and externa
 ## When to Use
 
 Load this skill when:
-- Generating verification scripts for test rewrites
+- Generating verification scripts via bulwark-verify skill
 - Determining how to test a specific component type
 - Implementing test-audit Step 7 rewrites
 

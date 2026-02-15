@@ -96,7 +96,7 @@ file;name.txt
 
 ## Consumer Usage
 
-When generating file I/O tests:
+When bulwark-verify generates file I/O tests:
 1. Load strings/boundaries for size edge cases
 2. Load encoding/charset for BOM and encoding tests
 3. Load strings/special-chars for control characters

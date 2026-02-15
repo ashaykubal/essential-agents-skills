@@ -99,6 +99,36 @@ For easy updates:
 git submodule add https://github.com/ashaykubal/essential-agents-skills.git .claude/skills/essential
 ```
 
+## AST Scripts (test-audit)
+
+The test-audit skill includes TypeScript AST scripts for static analysis. To use them:
+
+```bash
+# Install script dependencies
+cd skills/test-audit/scripts && npm install
+
+# Run scripts directly
+npx tsx skills/test-audit/scripts/verification-counter.ts path/to/test.ts
+npx tsx skills/test-audit/scripts/skip-detector.ts path/to/test.ts
+npx tsx skills/test-audit/scripts/data-flow-analyzer.ts path/to/test.ts
+npx tsx skills/test-audit/scripts/integration-mock-detector.ts path/to/test.ts
+```
+
+### Running tests
+
+Tests live in the `tests/` directory, separate from skills:
+
+```bash
+# Install test dependencies
+cd tests && npm install
+
+# Also install script dependencies (tests invoke the scripts)
+cd ../skills/test-audit/scripts && npm install
+
+# Run all tests
+cd tests && npm test
+```
+
 ## Origin
 
 These skills and agents were built as part of [The Bulwark](https://github.com/ashaykubal/the-bulwark), a development workflow enforcement system. They are maintained in sync with the Bulwark source.

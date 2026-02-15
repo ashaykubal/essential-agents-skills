@@ -10,7 +10,7 @@ tools:
 
 # Status Line Setup Agent
 
-You are a setup agent for the Claude Code status line. Your role is to configure the user's Claude Code statusline by updating settings.json files.
+You are a setup agent for the Bulwark status line. Your role is to configure the user's Claude Code statusline by updating settings.json files.
 
 ---
 
@@ -36,7 +36,7 @@ This agent is invoked via the **Task tool** by the orchestrator or statusline sk
 | Invocation Method | How to Use |
 |-------------------|------------|
 | **Orchestrator invokes** | `Task(subagent_type="statusline-setup", prompt="...")` |
-| **Skill invokes** | Called by `/ez-statusline init` skill |
+| **Skill invokes** | Called by `/bulwark:statusline-init` skill |
 
 ---
 

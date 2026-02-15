@@ -7,10 +7,10 @@ Extended examples for different agent types and scenarios.
 ## Code Auditor Output Example
 
 ```yaml
-# logs/code-auditor-20260111-143022.yaml
+# logs/bulwark-code-auditor-20260111-143022.yaml
 
 metadata:
-  agent: code-auditor
+  agent: bulwark-code-auditor
   timestamp: 2026-01-11T14:30:22Z
   model: sonnet
   task_id: "security-audit-auth-module"
@@ -91,10 +91,10 @@ diagnostics:
 ## Test Auditor Output Example
 
 ```yaml
-# logs/test-auditor-20260111-151245.yaml
+# logs/bulwark-test-auditor-20260111-151245.yaml
 
 metadata:
-  agent: test-auditor
+  agent: bulwark-test-auditor
   timestamp: 2026-01-11T15:12:45Z
   model: sonnet
   task_id: "test-audit-api-module"
@@ -162,10 +162,10 @@ diagnostics:
 ## Issue Debugger Output Example
 
 ```yaml
-# logs/issue-debugger-20260111-162030.yaml
+# logs/bulwark-issue-debugger-20260111-162030.yaml
 
 metadata:
-  agent: issue-debugger
+  agent: bulwark-issue-debugger
   timestamp: 2026-01-11T16:20:30Z
   model: sonnet
   task_id: "debug-issue-memory-leak"
@@ -229,10 +229,10 @@ diagnostics:
 ## Implementer Output Example
 
 ```yaml
-# logs/implementer-20260111-173500.yaml
+# logs/bulwark-implementer-20260111-173500.yaml
 
 metadata:
-  agent: implementer
+  agent: bulwark-implementer
   timestamp: 2026-01-11T17:35:00Z
   model: sonnet
   task_id: "implement-password-reset"
@@ -310,10 +310,10 @@ diagnostics:
 When a sub-agent encounters an error, the output format remains consistent:
 
 ```yaml
-# logs/code-auditor-20260111-180000.yaml
+# logs/bulwark-code-auditor-20260111-180000.yaml
 
 metadata:
-  agent: code-auditor
+  agent: bulwark-code-auditor
   timestamp: 2026-01-11T18:00:00Z
   model: sonnet
   task_id: "audit-legacy-module"

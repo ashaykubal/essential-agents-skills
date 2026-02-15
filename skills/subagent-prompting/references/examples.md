@@ -210,7 +210,7 @@ Write debug journey to: `logs/issue-debugger-20260110-160000.md`
 ### Validation Loop
 MUST run tests after fix:
 1. Apply fix
-2. Run: `just test`
+2. Run: `npx jest` (or your project test runner)
 3. IF tests fail: Analyze, adjust, repeat
 4. IF tests pass: Document and complete
 

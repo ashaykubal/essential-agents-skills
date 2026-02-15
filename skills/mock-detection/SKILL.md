@@ -33,7 +33,7 @@ Prompt template for deep mock appropriateness analysis using call graph tracing.
 This skill provides the **second stage** prompt template:
 
 ```
-test-audit orchestrates:
+test-audit (P0.8) orchestrates:
   Stage 1: test-classification (Haiku) → classification YAML
   Stage 2: mock-detection (Sonnet) → violations YAML    ← THIS SKILL
   Stage 3: synthesis (Sonnet) → audit report
@@ -70,6 +70,10 @@ Analyze flagged test files for T1-T4 violations using mock appropriateness rubri
 
 **Violation scope tracking:** See "Violation Scope Tracking" section below
 
+**Extended stub/fake patterns:** See `references/stub-patterns.md` — Meszaros taxonomy, class hierarchy detection, factory function classification
+
+**False positive prevention:** See `references/false-positive-prevention.md` — Two-tier allowlist (Universal Safe / Context-Dependent) and decision tree. Consult BEFORE flagging borderline patterns.
+
 ### OUTPUT
 
 Write violations to: `logs/mock-detection-{YYYYMMDD-HHMMSS}.yaml`
@@ -89,6 +93,21 @@ Determine whether mocks are appropriate based on test type:
 | **Unit** | External deps (DB, HTTP, fs) to isolate unit | Mocking function/module under test (T1) |
 | **Integration** | Unrelated systems only | Mocking integration boundaries (T3), broken chain (T3+) |
 | **E2E** | Almost never | Any mock breaking end-to-end flow |
+
+### Mixed-Type Files (MANDATORY)
+
+Test files commonly contain multiple test types in different describe blocks (e.g., unit tests at top, integration tests at bottom). You MUST evaluate mock appropriateness **per describe block/section**, not per file. A `jest.fn()` that is safe in a unit test section is a T3 violation in an integration test section of the same file.
+
+Classification signals (language-agnostic — apply to TypeScript, Python, Java, Go, Ruby, etc.):
+- Block/suite name containing keywords: `integration`, `e2e`, `end-to-end`, `acceptance`, `system`
+- Preceding comments or section headers: `// INTEGRATION TESTS`, `# E2E`, `/* system tests */`
+- Setup patterns within the block (real DB connections = integration, browser launch = e2e)
+
+If AST integration-mock metadata is available (from `npx tsx skills/test-audit/scripts/integration-mock-detector.ts`), use it as ground truth for section boundaries and mock locations. Validate AST leads and add any the AST missed.
+
+**BINDING: AST classification is final.** When the AST script classifies a section as integration or e2e, that classification is NOT subject to LLM override. You MUST evaluate mocks in that section against integration/e2e rules — even if you believe the section is "actually" a unit test. Dismissing an AST T3 lead by re-classifying the section as a different test type is a rule violation. If you believe the section is mislabeled, note it as advisory — but still flag T3 violations against the classified type.
+
+See `references/false-positive-prevention.md` § "Worked Example: Mixed-Type File" for a concrete demonstration.
 
 ### Key Principle
 
@@ -146,6 +165,12 @@ A mock is inappropriate when it **defeats the purpose of the test**:
 - `mockData` used where real function output should flow
 - Data manually constructed instead of flowing from upstream function
 - Integration test with hardcoded intermediate values
+- Property access on manually-constructed objects used in downstream calls (e.g., `mockOrder.id` passed into new objects)
+
+**Class hierarchy signals** (see `references/stub-patterns.md` for full taxonomy):
+- Classes named Fake*/Stub*/Mock*/InMemory*/Test* that implement interfaces or extend base classes
+- Manual stub objects without naming conventions (all methods are no-ops or return hardcoded values)
+- Factory functions prefixed with `buildMock*` or `createFake*`
 
 **Call graph check:** Trace data flow. If Component A should output to Component B, but test injects `mockAOutput` into B, the chain is broken.
 
@@ -155,7 +180,7 @@ A mock is inappropriate when it **defeats the purpose of the test**:
 **Priority:** P2 (Pattern Issues)
 
 **Detection patterns:**
-- Test file exists but `just test` not run
+- Test file exists but `npx jest` (or your project test runner) not run
 - Tests pass in isolation but skip in suite
 - Manual notation: "Requires V3 manual verification"
 
@@ -316,6 +341,9 @@ totals:
   total_affected_lines: 154
 
 file_summaries:
+  # For each file, compute affected_lines as the UNION of all violation_scope ranges
+  # (merge overlapping/identical ranges). Do NOT sum individual affected_lines values.
+  # Example: two violations both scoped to [228, 269] = 42 affected lines, not 84.
   - file: tests/proxy.test.ts
     verification_lines: 95
     affected_lines: 80
@@ -406,7 +434,7 @@ Style and organization issues:
 
 ### Orchestrator Usage
 
-The orchestrator (test-audit) constructs the full prompt by:
+The orchestrator (P0.8) constructs the full prompt by:
 
 1. Loading this skill content
 2. Including classification YAML path in CONTEXT
@@ -415,14 +443,14 @@ The orchestrator (test-audit) constructs the full prompt by:
 
 ### Upstream Input
 
-From test-classification:
+From P0.6 (test-classification):
 - `needs_deep_analysis: true` file list
 - `verification_lines` count per file
 - `mock_indicators` as analysis starting points
 
 ### Downstream Output
 
-To test-audit (synthesis):
+To P0.8 (test-audit synthesis):
 - Violation details with scope tracking
 - `affected_lines` per file
 - Pre-calculated `test_effectiveness` per file
@@ -469,7 +497,15 @@ Read all outputs after completion, then merge.
 
 ---
 
+## References
+
+| Document | Purpose |
+|----------|---------|
+| `references/stub-patterns.md` | Meszaros test double taxonomy, class hierarchy detection, factory function classification |
+| `references/false-positive-prevention.md` | Two-tier allowlist (Universal Safe / Context-Dependent), decision tree for violation evaluation |
+
 ## Related Skills
 
-- `test-classification` - Surface classification (upstream)
-- `test-audit` - Orchestration and synthesis (downstream)
+- `test-classification` (P0.6) - Surface classification (upstream)
+- `test-audit` (P0.8) - Orchestration and synthesis (downstream)
+- `pipeline-templates` (P0.3) - Test Audit pipeline definition

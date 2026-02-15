@@ -116,7 +116,7 @@ exec(userInput)  // NEVER do this
 
 ## Consumer Usage
 
-When generating process spawn tests:
+When bulwark-verify generates process spawn tests:
 1. Load ALL command injection patterns (T0 priority)
 2. Load strings/special-chars for escaping tests
 3. Include exit code boundary tests

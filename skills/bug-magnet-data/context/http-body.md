@@ -84,7 +84,7 @@ name=%C3%A9  (é encoded)
 
 ## Consumer Usage
 
-When generating HTTP body tests:
+When bulwark-verify generates HTTP body tests:
 1. Identify Content-Type
 2. Load formats/ category for that type
 3. Load strings/boundaries

@@ -19,8 +19,8 @@ Curated edge case test data for boundary testing, verification scripts, and test
 | Consumer | Trigger | Usage |
 |----------|---------|-------|
 | test-audit | Step 7 (edge case gap detection) | Identify missing boundary test coverage |
-| Verification scripts | Generating verification scripts | Inject edge cases into test scenarios |
-| Fix validation | Validating a fix | Test fix against boundary conditions |
+| bulwark-verify | Generating verification scripts | Inject edge cases into test scenarios |
+| bulwark-fix-validator | Validating a fix | Test fix against boundary conditions |
 
 **DO NOT use for:**
 - Encrypted/compressed data (edge cases won't penetrate wrapping)
@@ -261,7 +261,7 @@ values:
 6. Report missing edge case coverage
 ```
 
-### Verification Scripts
+### bulwark-verify
 
 ```
 1. Detect component type from code under verification
@@ -272,7 +272,7 @@ values:
 6. Inject applicable edge cases into verification script
 ```
 
-### Fix Validation
+### bulwark-fix-validator
 
 ```
 1. Detect component type from fix

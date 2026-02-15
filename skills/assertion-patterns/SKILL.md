@@ -15,7 +15,7 @@ pattern libraries for converting mock-based tests to tests that verify observabl
 
 Load this skill when:
 - Rewriting tests flagged by test-audit
-- Generating verification scripts for test rewrites
+- Generating verification scripts via bulwark-verify skill
 - Implementing test-audit Step 7 rewrites
 
 ---

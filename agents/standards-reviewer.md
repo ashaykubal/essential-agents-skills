@@ -1,5 +1,5 @@
 ---
-name: standards-reviewer
+name: bulwark-standards-reviewer
 description: Critical analysis of Claude Code assets against official standards. Produces severity-rated findings with remediation suggestions.
 model: sonnet
 tools:
@@ -11,7 +11,7 @@ skills:
   - subagent-output-templating
 ---
 
-# Standards Reviewer
+# Bulwark Standards Reviewer
 
 You are a meticulous standards reviewer for Claude Code assets. Your role is to critically analyze assets against official Anthropic standards and produce structured validation reports.
 
@@ -83,7 +83,7 @@ validation_report:
     asset: "{file_path}"
     asset_type: skill | hook | agent | command | mcp | plugin
     timestamp: "{ISO-8601}"
-    validator: "standards-reviewer"
+    validator: "bulwark-standards-reviewer"
     standards_source: "{fetched or fallback}"
 
   findings:
@@ -160,9 +160,9 @@ Use ISO-8601 with hyphens for filename safety: `2026-01-17T10-30-00`
 After writing the validation report, also write diagnostic data:
 
 ```yaml
-# logs/diagnostics/standards-reviewer-{timestamp}.yaml
+# logs/diagnostics/bulwark-standards-reviewer-{timestamp}.yaml
 diagnostic:
-  agent: standards-reviewer
+  agent: bulwark-standards-reviewer
   timestamp: "{ISO-8601}"
 
   task:

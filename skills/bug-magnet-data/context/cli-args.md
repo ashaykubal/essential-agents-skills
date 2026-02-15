@@ -84,7 +84,7 @@ Edge case guidance for testing command-line argument handling.
 
 ## Consumer Usage
 
-When test-audit or verification scripts process CLI-related code:
+When test-audit or bulwark-verify processes CLI-related code:
 1. Load strings/boundaries
 2. Load strings/special-chars
 3. Load command injection patterns from strings/injection

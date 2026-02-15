@@ -1,6 +1,6 @@
 ---
 name: ez-statusline
-description: Configure a multi-line status bar for Claude Code. Supports init, preset switching, and customization.
+description: Configure the Bulwark status line for Claude Code. Supports init, preset switching, and customization.
 user-invocable: true
 tools:
   - Bash
@@ -8,16 +8,16 @@ tools:
   - Edit
 ---
 
-# EZ Status Line
+# Bulwark Status Line
 
-Configure a multi-line status bar for Claude Code.
+Configure the Bulwark multi-line status line for Claude Code.
 
 ---
 
 ## When to Use
 
 Use this skill when:
-- Setting up the status line for the first time (`init`)
+- Setting up the Bulwark status line for the first time (`init`)
 - Switching between status line presets (`minimal`, `developer`, `cost`)
 - User asks to configure or customize the status line display
 
@@ -51,8 +51,8 @@ The subcommand is passed via `$1`:
 
 ```
 /ez-statusline init
-               ^^^^
-               $1 = "init"
+                     ^^^^
+                     $1 = "init"
 ```
 
 Parse `$1` and execute the corresponding subcommand below.
@@ -61,18 +61,18 @@ Parse `$1` and execute the corresponding subcommand below.
 
 ## Subcommand: init
 
-Install the status line for first-time setup.
+Install the Bulwark status line for first-time setup.
 
 **Execute these steps:**
 
 1. **Bash**: Create config directory
    ```bash
-   mkdir -p ~/.claude-statusline
+   mkdir -p ~/.bulwark
    ```
 
 2. **Bash**: Copy default config template
    ```bash
-   cp ".claude/skills/ez-statusline/templates/statusline-default.yaml" ~/.claude-statusline/statusline.yaml
+   cp "${CLAUDE_PROJECT_DIR}/skills/ez-statusline/templates/statusline-default.yaml" ~/.bulwark/statusline.yaml
    ```
 
 3. **Spawn statusline-setup agent** to update settings.json:
@@ -85,7 +85,7 @@ Install the status line for first-time setup.
      {
        \"statusLine\": {
          \"type\": \"command\",
-         \"command\": \".claude/skills/ez-statusline/scripts/statusline.sh\"
+         \"command\": \"${CLAUDE_PROJECT_DIR}/skills/ez-statusline/scripts/statusline.sh\"
        }
      }
 
@@ -104,7 +104,7 @@ Switch to minimal preset (single line: model + gauge + tokens).
 
 **Execute these steps:**
 
-1. **Read**: `~/.claude-statusline/statusline.yaml`
+1. **Read**: `~/.bulwark/statusline.yaml`
 2. **Edit**: Change `preset:` value to `minimal`
 3. **Display to user**: "Switched to minimal preset."
 
@@ -121,7 +121,7 @@ Switch to developer preset (3 lines).
 
 **Execute these steps:**
 
-1. **Read**: `~/.claude-statusline/statusline.yaml`
+1. **Read**: `~/.bulwark/statusline.yaml`
 2. **Edit**: Change `preset:` value to `developer`
 3. **Display to user**: "Switched to developer preset."
 
@@ -137,7 +137,7 @@ Switch to cost preset (2 lines).
 
 **Execute these steps:**
 
-1. **Read**: `~/.claude-statusline/statusline.yaml`
+1. **Read**: `~/.bulwark/statusline.yaml`
 2. **Edit**: Change `preset:` value to `cost`
 3. **Display to user**: "Switched to cost preset."
 
@@ -147,9 +147,9 @@ Switch to cost preset (2 lines).
 
 | File | Purpose |
 |------|---------|
-| `~/.claude-statusline/statusline.yaml` | User config (presets, colors) |
-| `.claude/skills/ez-statusline/scripts/statusline.sh` | Main script (bundled with skill) |
-| `.claude/skills/ez-statusline/templates/statusline-default.yaml` | Default config template |
+| `~/.bulwark/statusline.yaml` | User config (presets, colors) |
+| `skills/ez-statusline/scripts/statusline.sh` | Main script (bundled with skill) |
+| `skills/ez-statusline/templates/statusline-default.yaml` | Default config template |
 
 ---
 
@@ -159,4 +159,3 @@ Switch to cost preset (2 lines).
 - Multi-line output is supported
 - Colors use RGB escape codes for exact hex values
 - Gauge and percentage colors match threshold (green/yellow/coral)
-- Requires `jq` for JSON parsing and optionally `git` for branch display

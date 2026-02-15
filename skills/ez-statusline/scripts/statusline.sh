@@ -1,5 +1,5 @@
 #!/bin/bash
-# Claude Code Status Line
+# Bulwark Status Line for Claude Code
 # Displays multi-line status with context gauge, model info, and git status
 
 set -euo pipefail

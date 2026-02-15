@@ -151,10 +151,10 @@ Completed Justfile templates for test, lint, and typecheck. Also fixed critical 
 ## What Was Accomplished
 
 - [x] Created `lib/templates/justfile.template` (~80 lines)
-- [x] Implemented `just test`, `just lint`, `just typecheck` recipes
+- [x] Implemented `npx jest` (or your project test runner), your project lint command, `npx tsc --noEmit` (or your project typecheck command) recipes
 - [x] Fixed P1.1 hook Exit 2 handling (was Exit 1)
 - [x] Updated hooks/hooks.json with correct exit codes
-- [ ] Add `just build` recipe (deferred - lower priority)
+- [ ] Add your project build command recipe (deferred - lower priority)
 
 ## Files Created/Modified
 
@@ -179,7 +179,7 @@ Completed Justfile templates for test, lint, and typecheck. Also fixed critical 
 - **Rationale**: Exit 2 injects error into agent context per Anthropic docs
 - **Impact**: All hooks must follow this convention
 
-### Defer just build
+### Defer project build
 - **Decision**: Defer build recipe to future session
 - **Rationale**: Core recipes complete, token budget exhausted
 - **Impact**: Minor - build not critical for current phase
@@ -187,7 +187,7 @@ Completed Justfile templates for test, lint, and typecheck. Also fixed critical 
 ## What's Next
 
 1. Begin P2.2 - Just command runner integration
-2. Add `just build` recipe
+2. Add your project build command recipe
 3. Document Justfile patterns in skill
 
 ## Blockers / Issues

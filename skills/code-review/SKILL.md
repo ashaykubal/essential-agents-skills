@@ -26,7 +26,7 @@ Comprehensive code review with four independently-referenceable sections. Runs s
 | Quality check | "Is this code clean?", "Check code quality", "Standards compliance" |
 
 **DO NOT use for:**
-- Running tests (use `just test`)
+- Running tests (use `npx jest` (or your project test runner))
 - Auditing test quality (use `test-audit` skill)
 - Debugging issues (use `issue-debugging` skill)
 - Performance profiling (requires runtime analysis)
@@ -78,8 +78,8 @@ This skill references supporting files. Understanding what's required vs optiona
 
 ```
 Phase 1: Static Analysis (Deterministic)
-├── Run: just typecheck → capture output
-├── Run: just lint → capture output
+├── Run: npx tsc --noEmit → capture output
+├── Run: your project lint command → capture output
 └── If failures: STOP, return to user (fail fast)
 
 Phase 2: LLM Review (Judgment-Based)
@@ -133,8 +133,8 @@ Threats and exploits: authentication/authorization logic, injection patterns, se
 **Does NOT cover:** Type errors (→ Type Safety), code style (→ Linting).
 
 ### Prerequisites
-- `just typecheck` passed
-- `just lint` passed
+- `npx tsc --noEmit` (or your project typecheck command) passed
+- your project lint command passed
 
 ### Patterns (REQUIRED)
 Load `references/security-patterns.md` for:
@@ -170,7 +170,7 @@ Type system integrity: explicit `any`, implicit any from missing types, unsafe t
 **Does NOT cover:** Runtime errors from logic bugs (→ tests), security issues (→ Security).
 
 ### Prerequisites
-- `just typecheck` passed (confirms type-correct, looking for holes)
+- `npx tsc --noEmit` (or your project typecheck command) passed (confirms type-correct, looking for holes)
 
 ### Patterns (REQUIRED)
 Load `references/type-safety-patterns.md` for:
@@ -206,7 +206,7 @@ Style and structure requiring judgment: cyclomatic complexity, semantic naming, 
 **Does NOT cover:** Formatting (automated), syntax (compiler), security (→ Security).
 
 ### Prerequisites
-- `just lint` passed (catches automatable issues)
+- your project lint command passed (catches automatable issues)
 
 ### Patterns (REQUIRED)
 Load `references/linting-patterns.md` for:
@@ -343,7 +343,7 @@ When `--quick` flag is specified, sections are tiered by lines changed:
 
 ## Output Format
 
-Output templates follow the `subagent-output-templating` skill structure with skill-specific extensions for code review findings.
+Output templates follow the `subagent-output-templating` skill (P0.2) structure with skill-specific extensions for code review findings.
 
 ### Direct Invocation
 Use template from `templates/output-direct.yaml`:
@@ -362,9 +362,9 @@ Use template from `templates/output-pipeline.yaml`:
 
 ## Pipeline Integration
 
-### As Full Auditor
+### As Full Auditor (bulwark-code-auditor)
 ```fsharp
-code-auditor
+bulwark-code-auditor
 ├── context: fork (isolated review)
 ├── skills: code-review
 └── Runs all 4 sections, never fixes
@@ -379,15 +379,13 @@ SecurityReviewer (--section=security)
 |> ReviewSynthesizer (consolidate)
 ```
 
-> **Note:** Additional pipeline orchestration available in [The Bulwark](https://github.com/ashaykubal/the-bulwark) framework.
-
 ---
 
 ## Diagnostic Output (REQUIRED)
 
 **MANDATORY**: You MUST write diagnostic output after every review. This is Phase 3 of the workflow and cannot be skipped.
 
-**Standard**: Follows `subagent-output-templating` diagnostic format.
+**Standard**: Follows `subagent-output-templating` (P0.2) diagnostic format.
 
 Write diagnostic output to:
 ```
@@ -422,7 +420,7 @@ diagnostic:
 
 **IMPORTANT**: Before returning to the user, verify ALL items are complete:
 
-- [ ] Phase 1: Static analysis ran (`just typecheck`, `just lint`)
+- [ ] Phase 1: Static analysis ran (`npx tsc --noEmit` (or your project typecheck command), your project lint command)
 - [ ] Phase 2: LLM review completed for all enabled sections
 - [ ] Phase 2: Findings delivered to user (console output)
 - [ ] Phase 3: Diagnostic log written to `logs/diagnostics/code-review-{timestamp}.yaml`

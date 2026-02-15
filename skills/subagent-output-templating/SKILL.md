@@ -8,7 +8,7 @@ user-invocable: false
 
 ## Overview
 
-This skill provides standardized templates for sub-agent OUTPUT formatting. It complements `subagent-prompting` which defines INPUT structure:
+This skill provides standardized templates for sub-agent OUTPUT formatting. It complements `subagent-prompting` (P0.1) which defines INPUT structure:
 
 | Skill | Purpose |
 |-------|---------|
@@ -30,14 +30,14 @@ Use this skill when:
 logs/{agent-name}-{YYYYMMDD-HHMMSS}.yaml
 ```
 
-Example: `logs/code-auditor-20260111-143022.yaml`
+Example: `logs/bulwark-code-auditor-20260111-143022.yaml`
 
 ### YAML Schema
 
 ```yaml
 # Required: Metadata block
 metadata:
-  agent: {agent-name}           # e.g., code-auditor
+  agent: {agent-name}           # e.g., bulwark-code-auditor
   timestamp: {ISO-8601}         # e.g., 2026-01-11T14:30:22Z
   model: {model-used}           # sonnet, haiku, or opus
   task_id: {unique-identifier}  # For tracking across pipeline stages
@@ -73,7 +73,7 @@ completion:
     - "{action item 1}"
 
 # Required for code-writing agents (omit for read-only agents):
-# Pipeline suggestions from quality gate output
+# Pipeline suggestions from implementer-quality.sh output
 pipeline_suggestions:
   - pipeline: "{recommended pipeline name}"
     target_files:
@@ -257,12 +257,12 @@ Next: run migration in staging, monitor for 48h before production.
 
 ### Pipeline Suggestions in Summary (Code-Writing Agents)
 
-Code-writing agents that receive pipeline suggestions from quality gates MUST include them in the summary with MANDATORY language. This ensures the orchestrator sees and acts on them.
+Code-writing agents (e.g., bulwark-implementer) that invoke `implementer-quality.sh` and receive pipeline suggestions MUST include them in the summary with MANDATORY language. This ensures the orchestrator sees and acts on them per SA6.
 
 ```
-MANDATORY FOLLOW-UP: Run the following pipeline(s):
+MANDATORY FOLLOW-UP (SA6): Run the following pipeline(s):
   - {pipeline} on {target_files} ({reason})
-Orchestrator MUST evaluate each suggestion and either execute or document deferral.
+Orchestrator MUST evaluate each suggestion and either execute or document deferral per SA6.
 ```
 
 Read-only agents (reviewers, auditors) omit this section.
@@ -405,7 +405,8 @@ diagnostics:
 
 ## Related Skills
 
-- **subagent-prompting**: Defines INPUT structure (GOAL/CONSTRAINTS/CONTEXT/OUTPUT)
+- **subagent-prompting** (P0.1): Defines INPUT structure (GOAL/CONSTRAINTS/CONTEXT/OUTPUT)
+- **pipeline-templates** (P0.3): Pre-defined workflows that consume this output format
 
 ---
 

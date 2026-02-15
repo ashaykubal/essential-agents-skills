@@ -1,5 +1,5 @@
-# Claude Code Status Line Configuration
-# Copy to ~/.claude-statusline/statusline.yaml to customize
+# Bulwark Status Line Configuration
+# Copy to ~/.bulwark/statusline.yaml to customize
 
 preset: developer
 
