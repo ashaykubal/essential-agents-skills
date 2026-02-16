@@ -1,0 +1,42 @@
+diagnostic:
+  skill: bulwark-research
+  timestamp: "{ISO-8601 timestamp}"
+  invocation:
+    topic: "{topic description}"
+    source: prompt | document
+    context_file: null | "{path}"
+  agents:
+    total_spawned: 5
+    successful: "{count}"
+    retried: "{count}"
+    failed: "{count}"
+    agents_list:
+      - name: direct-investigation
+        model: sonnet
+        status: success | retried | failed
+        output_file: "logs/research/{topic-slug}/01-direct-investigation.md"
+      - name: practitioner
+        model: sonnet
+        status: success | retried | failed
+        output_file: "logs/research/{topic-slug}/02-practitioner.md"
+      - name: contrarian
+        model: sonnet
+        status: success | retried | failed
+        output_file: "logs/research/{topic-slug}/03-contrarian.md"
+      - name: first-principles
+        model: sonnet
+        status: success | retried | failed
+        output_file: "logs/research/{topic-slug}/04-first-principles.md"
+      - name: prior-art
+        model: sonnet
+        status: success | retried | failed
+        output_file: "logs/research/{topic-slug}/05-prior-art.md"
+  pre_flight_interview: skipped | completed
+  pre_flight_rounds: "{count}"
+  post_synthesis_interview: skipped | completed
+  post_synthesis_rounds: "{count}"
+  synthesis_file: "logs/research/{topic-slug}/synthesis.md"
+  token_checkpoints:
+    pre_spawn: "{percentage}"
+    post_agents: "{percentage}"
+    post_synthesis: "{percentage}"

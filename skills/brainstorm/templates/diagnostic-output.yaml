@@ -1,0 +1,49 @@
+diagnostic:
+  skill: bulwark-brainstorm
+  timestamp: "{ISO-8601 timestamp}"
+  invocation:
+    topic: "{topic description}"
+    source: prompt | document
+    research_file: null | "{path}"
+  agents:
+    total_spawned: 5
+    successful: "{count}"
+    retried: "{count}"
+    failed: "{count}"
+    agents_list:
+      - name: project-sme
+        model: opus
+        status: success | retried | failed
+        output_file: "logs/brainstorm/{topic-slug}/01-project-sme.md"
+        stage: 2
+      - name: product-manager
+        model: opus
+        status: success | retried | failed
+        output_file: "logs/brainstorm/{topic-slug}/02-product-manager.md"
+        stage: 3
+      - name: technical-architect
+        model: opus
+        status: success | retried | failed
+        output_file: "logs/brainstorm/{topic-slug}/03-technical-architect.md"
+        stage: 3
+      - name: development-lead
+        model: opus
+        status: success | retried | failed
+        output_file: "logs/brainstorm/{topic-slug}/04-development-lead.md"
+        stage: 3
+      - name: critical-analyst
+        model: opus
+        status: success | retried | failed
+        output_file: "logs/brainstorm/{topic-slug}/05-critical-analyst.md"
+        stage: 4
+  pre_flight_interview: skipped | completed
+  pre_flight_rounds: "{count}"
+  post_synthesis_interview: skipped | completed
+  post_synthesis_rounds: "{count}"
+  synthesis_file: "logs/brainstorm/{topic-slug}/synthesis.md"
+  token_checkpoints:
+    pre_spawn: "{percentage}"
+    post_sme: "{percentage}"
+    post_roles: "{percentage}"
+    post_critic: "{percentage}"
+    post_synthesis: "{percentage}"
