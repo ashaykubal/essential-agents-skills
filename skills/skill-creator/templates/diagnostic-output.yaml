@@ -1,0 +1,37 @@
+diagnostic:
+  skill: skill-creator
+  timestamp: "{ISO-8601 timestamp}"
+  invocation:
+    input_type: "description | name | doc"
+    input_value: "{user-provided description, name, or doc path}"
+  interview:
+    rounds: "{count}"  # 1-2
+    questions_asked: "{count}"  # 5-10
+    follow_ups_triggered: true | false
+  classification:
+    context_mode: "inline | fork"
+    context_reason: "{one-line reason}"
+    subagent_pattern: "none | sequential | parallel | agent-teams"
+    subagent_reason: "{one-line reason}"
+    supporting_files: ["{file-type-1}", "{file-type-2}"]  # references, templates, scripts
+    supporting_reason: "{one-line reason}"
+    template_selected: "{template-simple | template-reference-heavy | template-pipeline | template-script-driven | template-research}"
+    user_confirmed: true | false
+    classification_rounds: "{count}"  # 1-2
+  generation:
+    model: sonnet
+    status: "success | retried | failed"
+    files_created:
+      - path: "{relative-path}"
+        lines: "{count}"
+    target_directory: "{path}"
+  validation:
+    validator_run: true | false
+    critical_findings: "{count}"
+    high_findings: "{count}"
+    medium_findings: "{count}"
+    low_findings: "{count}"
+    refinement_attempts: "{count}"  # 0-2
+    final_status: "pass | pass-with-caveats | fail"
+  outcome: "success | partial | failure"
+  errors: []  # List any errors, retries, or unexpected conditions
