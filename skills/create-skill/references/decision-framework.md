@@ -1,6 +1,6 @@
 # Decision Framework
 
-Interview questions and classification logic for the skill-creator pipeline. The orchestrator uses this at Stage 0 (Pre-Flight) and Stage 1 (Classify).
+Interview questions and classification logic for the create-skill pipeline. The orchestrator uses this at Stage 0 (Pre-Flight) and Stage 1 (Classify).
 
 ---
 

@@ -1,5 +1,5 @@
 ---
-name: skill-creator
+name: create-skill
 description: Generates Claude Code skills from requirements using adaptive interview, complexity classification, and iterative validation. Use when creating new skills, scaffolding skill structure, or generating skills with sub-agent orchestration.
 user-invocable: true
 argument-hint: "<description-or-name> [--doc <requirements-path>]"
@@ -7,7 +7,7 @@ skills:
   - subagent-prompting
 ---
 
-# Skill Creator
+# Create Skill
 
 Generates a complete Claude Code skill from a description or requirements document. Conducts an adaptive interview to understand the skill's purpose, classifies it into one of 5 structural types, spawns a Sonnet sub-agent to generate the files, validates with anthropic-validator, and presents the scaffold with architectural decisions.
 
@@ -26,7 +26,7 @@ Generates a complete Claude Code skill from a description or requirements docume
 
 **DO NOT use for:**
 - Editing existing skills (edit directly)
-- Creating agents (use `agent-creator`)
+- Creating agents (use `create-agent`)
 - Debugging skill issues (use `issue-debugging`)
 - Validating existing skills (use `anthropic-validator`)
 
@@ -51,8 +51,8 @@ Generates a complete Claude Code skill from a description or requirements docume
 ## Usage
 
 ```
-/skill-creator <description-or-name>
-/skill-creator --doc <requirements-document>
+/create-skill <description-or-name>
+/create-skill --doc <requirements-document>
 ```
 
 **Arguments:**
@@ -60,9 +60,9 @@ Generates a complete Claude Code skill from a description or requirements docume
 - `--doc <path>` — Path to a requirements document. Extracts interview answers from it instead of asking fresh.
 
 **Examples:**
-- `/skill-creator a skill that audits dependency versions` — Start from description
-- `/skill-creator --doc plans/task-briefs/P5.4-skill-creator.md` — Start from requirements doc
-- `/skill-creator changelog-generator` — Start from a name
+- `/create-skill a skill that audits dependency versions` — Start from description
+- `/create-skill --doc plans/task-briefs/P5.4-create-skill.md` — Start from requirements doc
+- `/create-skill changelog-generator` — Start from a name
 
 ---
 
@@ -97,7 +97,7 @@ If you find yourself thinking "I can generate this directly without a sub-agent"
 ## Pipeline
 
 ```fsharp
-// skill-creator pipeline
+// create-skill pipeline
 PreFlight(args)                              // Stage 0: Orchestrator — parse input, adaptive interview
 |> Classify(interview_answers)               // Stage 1: Orchestrator — three independent decisions
 |> Generate(classification, template, examples) // Stage 2: Sonnet sub-agent — produce skill files
@@ -283,7 +283,7 @@ Stage 5: Present
 
 ```
 Stage 6: Diagnostics
-├── Write to: logs/diagnostics/skill-creator-{YYYYMMDD-HHMMSS}.yaml
+├── Write to: logs/diagnostics/create-skill-{YYYYMMDD-HHMMSS}.yaml
 │   └── Use templates/diagnostic-output.yaml schema
 └── Include:
     ├── Input: description/name/doc path

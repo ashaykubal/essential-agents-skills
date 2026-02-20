@@ -1,5 +1,5 @@
 diagnostic:
-  skill: skill-creator
+  skill: create-skill
   timestamp: "{ISO-8601 timestamp}"
   invocation:
     input_type: "description | name | doc"
