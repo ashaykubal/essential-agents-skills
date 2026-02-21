@@ -1,0 +1,39 @@
+diagnostic:
+  skill: create-agent
+  timestamp: "{ISO-8601 timestamp}"
+  invocation:
+    input_type: "description | name | doc"
+    input_value: "{user-provided description, name, or doc path}"
+  interview:
+    rounds: "{count}"  # 1-2
+    questions_asked: "{count}"  # 5-10
+    follow_ups_triggered: true | false
+  classification:
+    architecture: "single | pipeline | teams"
+    architecture_reason: "{one-line reason}"
+    tool_permissions: "full | restricted"
+    tools_list: ["{tool-1}", "{tool-N}"]  # if restricted
+    permissions_reason: "{one-line reason}"
+    configuration: ["{config-1}", "{config-2}"]  # stop-hook, sa1-template, diagnostics, etc.
+    configuration_reason: "{one-line reason}"
+    template_selected: "{template-single-agent | template-pipeline-agent | template-teams-agent}"
+    user_confirmed: true | false
+    classification_rounds: "{count}"  # 1-2
+  generation:
+    model: sonnet
+    status: "success | retried | failed"
+    files_created:
+      - path: "{relative-path}"
+        lines: "{count}"
+    target_directory: ".claude/agents/"
+    agent_name: "{agent-name}"
+  validation:
+    validator_run: true | false
+    critical_findings: "{count}"
+    high_findings: "{count}"
+    medium_findings: "{count}"
+    low_findings: "{count}"
+    refinement_attempts: "{count}"  # 0-2
+    final_status: "pass | pass-with-caveats | fail"
+  outcome: "success | partial | failure"
+  errors: []  # List any errors, retries, or unexpected conditions
