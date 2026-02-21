@@ -174,6 +174,18 @@ CONTEXT:
 - Asset type: {asset_type}
 - Supporting files inventory: {supporting_files from Step 2.5, if skill}
 - Referenced files verified: {yes/no with details}
+- Known conventions (DO NOT flag as high/critical — classify as informational):
+  The following patterns are intentional conventions backed by empirical testing.
+  LLM agents reliably ignore behavioral-register instructions ("You always verify...")
+  but comply with imperative-register instructions ("You MUST verify..."). These
+  patterns have been validated across Opus and Sonnet models. Treat as informational
+  only — note the divergence from pure Anthropic style but do NOT elevate severity:
+  * Pre-Flight Gate sections with MUST/MUST NOT binding language
+  * Imperative Protocol sections (step-by-step operational instructions)
+  * Permissions Setup sections documenting settings.json configuration
+  * Completion Checklists with checkbox items
+  * DO/DO NOT mission sections
+  * Tool Usage Constraints with Allowed/Forbidden per tool
 
 OUTPUT:
 Write structured YAML to logs/validations/{asset-name}-{timestamp}.yaml
