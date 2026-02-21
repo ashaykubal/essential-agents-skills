@@ -1,8 +1,8 @@
-# Template: Single-Purpose Agent
+# Agent Template: Single-Purpose Sub-Agent
 
-Use this template when the agent performs a single focused task without sub-agent orchestration. Typical for reviewers, analyzers, classifiers, and specialized workers.
+Template for generating `.claude/agents/*.md` files when create-skill produces a pipeline skill. Each pipeline stage that uses a dedicated sub-agent gets its own agent file following this structure.
 
-**When to use**: Decision A = single focused task.
+This file is replicated from `create-subagent/references/template-single-agent.md` for self-containment. If the source evolves, `continuous-feedback` will flag the drift.
 
 ---
 
@@ -12,7 +12,7 @@ Use this template when the agent performs a single focused task without sub-agen
 .claude/agents/{agent-name}.md
 ```
 
-Single file — no supporting directories needed.
+Single file per sub-agent — no supporting directories needed.
 
 ## Generated Agent Structure
 
@@ -70,7 +70,7 @@ This agent is invoked via the **Task tool**:
 | Method | How to Use |
 |--------|-----------|
 | **Direct** | `Task(subagent_type="{agent-name}", prompt="...")` |
-| **User request** | Ask Claude to "run the {agent-name}" |
+| **Pipeline stage** | Referenced by orchestrator skills |
 
 **Input handling**:
 1. Read task details from the prompt
@@ -185,10 +185,11 @@ Add to `.claude/settings.json` or `.claude/settings.local.json`:
 
 - Write in system-prompt register (WHO the agent IS, not WHAT to do)
 - Open with identity statement: "You are a..."
-- Include Pre-Flight Gate with MUST/MUST NOT (binding language)
+- Include Pre-Flight Gate with MUST/MUST NOT (binding language, DEF-P4-005)
 - Include DO/DO NOT mission section
 - Include tool usage constraints for every tool listed in frontmatter
 - Include Permissions Setup section (tool permissions unsolved per #10093)
 - Include diagnostic output section with YAML schema
 - Single-purpose agents are typically 150-250 lines
 - Default model: Sonnet (unless task needs Haiku speed or Opus depth)
+- For pipeline sub-agents: the agent's identity should reflect its stage role (e.g., "You are a security reviewer" not "You are Stage 2")

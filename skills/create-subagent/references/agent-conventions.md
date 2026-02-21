@@ -116,7 +116,6 @@ Only include tools the agent actually needs. Common patterns:
 | Read-only reviewer | Read, Glob, Grep, Write (for reports only) |
 | Code writer | Read, Grep, Glob, Write, Edit, Bash |
 | Research agent | Read, Glob, Grep, WebFetch, WebSearch |
-| Orchestrator | Read, Glob, Grep, Write, Task |
 
 ---
 
@@ -208,25 +207,6 @@ If this agent emits diagnostic output, add a SubagentStop hook:
 }
 \`\`\`
 ```
-
----
-
-## Prompt Template Compliance (Pipeline Agents)
-
-Pipeline agents that spawn sub-agents must use the 4-part prompt template:
-
-```markdown
-## Sub-Agent Invocation
-
-When spawning sub-agents, use the 4-part template:
-
-1. **GOAL**: What success looks like for this sub-agent
-2. **CONSTRAINTS**: What the sub-agent cannot do
-3. **CONTEXT**: Input data, reference files, prior stage outputs
-4. **OUTPUT**: Expected deliverables, format, and output path
-```
-
-This section should be included in the generated agent's protocol when Decision A = pipeline or teams.
 
 ---
 

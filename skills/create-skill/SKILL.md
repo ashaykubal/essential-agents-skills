@@ -26,7 +26,7 @@ Generates a complete Claude Code skill from a description or requirements docume
 
 **DO NOT use for:**
 - Editing existing skills (edit directly)
-- Creating agents (use `create-agent`)
+- Creating standalone sub-agents (use `create-subagent`)
 - Debugging skill issues (use `issue-debugging`)
 - Validating existing skills (use `anthropic-validator`)
 
@@ -39,6 +39,8 @@ Generates a complete Claude Code skill from a description or requirements docume
 | **Decision framework** | `references/decision-framework.md` | **REQUIRED** | Load at Stage 0 for interview + classification |
 | **Content guidance** | `references/content-guidance.md` | **REQUIRED** | Include in Stage 2 generator prompt |
 | **Skill templates** | `references/template-*.md` | **REQUIRED** | Load the matching template at Stage 2 |
+| **Agent template** | `references/agent-template.md` | **REQUIRED** | Include in Stage 2 prompt when template = pipeline |
+| **Agent conventions** | `references/agent-conventions.md` | **REQUIRED** | Include in Stage 2 prompt when template = pipeline |
 | **Diagnostic template** | `templates/diagnostic-output.yaml` | **REQUIRED** | Use at Stage 6 |
 | **Subagent prompting** | `subagent-prompting` skill | **REQUIRED** | Load at Stage 0 for 4-part prompt template |
 
@@ -202,8 +204,12 @@ Stage 2: Generate
 │   │   ├── User's interview answers (concrete examples from Q1)
 │   │   ├── Selected template: references/template-{type}.md
 │   │   ├── Content guidance: references/content-guidance.md
+│   │   ├── If pipeline template: references/agent-template.md (sub-agent file structure)
+│   │   ├── If pipeline template: references/agent-conventions.md (system-prompt register, frontmatter)
 │   │   ├── Instruction: "Read 1-2 existing skills of the same type from the
 │   │   │   codebase for structural reference (use Glob to find skills/*/SKILL.md)"
+│   │   ├── If pipeline template: "Read 1-2 existing agents from .claude/agents/*.md
+│   │   │   for sub-agent structural reference"
 │   │   ├── Target output directory (final deployment location)
 │   │   └── Working directory: tmp/create-skill/{skill-name}/
 │   └── OUTPUT:
@@ -211,6 +217,11 @@ Stage 2: Generate
 │       ├── Write reference files to {working-directory}/references/ (if applicable)
 │       ├── Write template files to {working-directory}/templates/ (if applicable)
 │       ├── Write script files to {working-directory}/scripts/ (if applicable)
+│       ├── If pipeline template: Write sub-agent files to {working-directory}/agents/
+│       │   ├── One .md file per pipeline stage: {skill-name}-{stage-name}.md
+│       │   ├── Each sub-agent follows agent-template.md structure
+│       │   ├── Each sub-agent uses system-prompt register (agent-conventions.md)
+│       │   └── Orchestrating SKILL.md references sub-agents by Task(subagent_type="{name}")
 │       └── Return summary: list of files created with line counts
 ├── Spawn: Task(description="Generate skill files", subagent_type="general-purpose",
 │          model="sonnet", prompt=...)
@@ -224,11 +235,14 @@ Stage 2: Generate
 Stage 3: Validate
 ├── Invoke /anthropic-validator on the working directory
 │   └── (Load the anthropic-validator skill and follow its workflow against {working-directory}/)
+├── If pipeline template: Also validate each sub-agent file in {working-directory}/agents/
+│   └── Run /anthropic-validator on each {skill-name}-{stage-name}.md
 ├── Read validator output
 ├── Check for critical/high findings:
 │   ├── 0 critical AND 0 high → proceed to Stage 5 (skip Stage 4)
 │   └── Any critical or high → proceed to Stage 4 (refine)
 ├── Check description is single-line (read SKILL.md, verify no multiline description)
+├── If pipeline template: Check each sub-agent uses system-prompt register
 └── Check no unnecessary files (no README.md, CHANGELOG.md, etc.)
 ```
 
@@ -261,15 +275,19 @@ Stage 4: Refine (attempt {N} of 2)
 
 ```
 Stage 5: Deploy & Present
-├── Deploy: Move all files from {working-directory}/ to {target-directory}/
+├── Deploy skill: Move skill files from {working-directory}/ to {target-directory}/
 │   ├── Copy directory tree preserving structure (SKILL.md, references/, templates/, scripts/)
-│   ├── This is the ONLY point where files are written to the final location
-│   └── Clean up: Remove {working-directory}/ after successful copy
-├── Read all generated files from {target-directory}/ for summary
+│   └── This is the ONLY point where skill files are written to the final location
+├── If pipeline template: Deploy sub-agents
+│   ├── Move {working-directory}/agents/*.md to .claude/agents/
+│   └── Each sub-agent file: .claude/agents/{skill-name}-{stage-name}.md
+├── Clean up: Remove {working-directory}/ after successful copy
+├── Read all generated files for summary
 ├── Present to user:
 │   ├── "Generated skill at: {target-directory}/"
+│   ├── If pipeline: "Generated sub-agents at: .claude/agents/"
 │   ├── "Files created:"
-│   │   └── List each file with line count
+│   │   └── List each file with line count (skill files + sub-agent files)
 │   ├── "Architectural decisions:"
 │   │   ├── "Context: {fork/inline} — {reason}"
 │   │   ├── "Sub-agents: {none/sequential/parallel/AT} — {reason}"
@@ -277,11 +295,14 @@ Stage 5: Deploy & Present
 │   ├── "Skill type: {template used}"
 │   ├── "Validation: {pass/fail with details}"
 │   ├── If caveats: "Unresolved issues: {list}"
+│   ├── If pipeline: "Sub-agent permissions to configure:"
+│   │   └── {List tool permissions for each sub-agent that must be added to settings.json}
 │   └── "Next steps:"
 │       ├── "1. Review and customize the generated instructions"
 │       ├── "2. Test activation by asking Claude to invoke it"
 │       ├── "3. Iterate on trigger patterns until activation is reliable"
-│       └── "4. Add domain-specific content to reference files"
+│       ├── "4. Add domain-specific content to reference files"
+│       └── If pipeline: "5. Configure tool permissions for sub-agents in .claude/settings.json"
 └── Note: This is a scaffold, not production-ready output (generate-and-customize contract)
 ```
 
@@ -341,11 +362,15 @@ Stage 6: Diagnostics
 - [ ] Stage 1: Classification presented to user and confirmed
 - [ ] Stage 2: Sonnet sub-agent spawned for generation
 - [ ] Stage 2: Generated files verified to exist
+- [ ] Stage 2: If pipeline — sub-agent files generated in {working-directory}/agents/
 - [ ] Stage 3: anthropic-validator run on generated skill
+- [ ] Stage 3: If pipeline — anthropic-validator run on each sub-agent file
 - [ ] Stage 4: Refinement attempted if validation found critical/high issues
-- [ ] Stage 5: Files deployed from working directory to target directory
+- [ ] Stage 5: Skill files deployed from working directory to target directory
+- [ ] Stage 5: If pipeline — sub-agent files deployed to .claude/agents/
 - [ ] Stage 5: Working directory cleaned up
 - [ ] Stage 5: Post-generation summary presented with architectural decisions
+- [ ] Stage 5: If pipeline — sub-agent permissions communicated
 - [ ] Stage 5: Next steps communicated (scaffold, not production-ready)
 - [ ] Stage 6: Diagnostic YAML written to `logs/diagnostics/`
 

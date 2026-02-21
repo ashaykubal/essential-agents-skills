@@ -8,16 +8,27 @@ Use this template when the skill orchestrates multiple distinct operations using
 
 ## File Structure
 
+Pipeline skills generate both an orchestrating skill AND dedicated sub-agent files:
+
 ```
 skills/{skill-name}/
-├── SKILL.md
+├── SKILL.md                              (orchestrating skill)
 ├── references/
 │   ├── {stage-specific-reference-1}.md
 │   └── {stage-specific-reference-N}.md
 └── templates/
     ├── {output-template}.md
     └── diagnostic-output.yaml
+
+.claude/agents/
+├── {skill-name}-{stage1-name}.md         (sub-agent for stage 1)
+├── {skill-name}-{stage2-name}.md         (sub-agent for stage 2)
+└── {skill-name}-{stageN-name}.md         (sub-agent for stage N)
 ```
+
+**Why dedicated sub-agent files**: Sub-agents defined in `.claude/agents/*.md` have deterministic behavior locked into their system prompts — consistent across invocations. Inline sub-agent definitions in skill references produce variable behavior because the orchestrator interprets the reference content differently per run.
+
+**Naming convention**: Sub-agent files are prefixed with the skill name to avoid collisions (e.g., `code-review-security-reviewer.md`, `code-review-type-safety-reviewer.md`).
 
 ## Generated SKILL.md Structure
 
@@ -50,6 +61,7 @@ skills:
 | **Output templates** | `templates/{name}.md` | **REQUIRED** | Include in sub-agent prompt |
 | **Diagnostics** | `templates/diagnostic-output.yaml` | **REQUIRED** | Write at pipeline completion |
 | **Prompting** | `subagent-prompting` skill | **REQUIRED** | Load before spawning any sub-agent |
+| **Sub-agents** | `.claude/agents/{skill-name}-{stage}.md` | **REQUIRED** | Invoked via Task tool per stage |
 
 ---
 
@@ -65,13 +77,13 @@ skills:
 
 **STOP. Before ANY work, you MUST acknowledge what this skill requires.**
 
-This skill uses a **multi-stage pipeline with sub-agents**. You are the orchestrator, NOT the executor.
+This skill uses a **multi-stage pipeline with dedicated sub-agents**. You are the orchestrator, NOT the executor.
 
 ### What You MUST Do
 
 1. Load all required dependencies
 2. Execute stages in order (or parallel where specified)
-3. Spawn sub-agents for each stage — do NOT perform their work yourself
+3. Spawn dedicated sub-agents for each stage via Task tool — do NOT perform their work yourself
 4. Write all outputs to `logs/`
 5. Write diagnostic YAML at completion
 
@@ -80,6 +92,7 @@ This skill uses a **multi-stage pipeline with sub-agents**. You are the orchestr
 - Do NOT skip stages
 - Do NOT perform sub-agent work yourself
 - Do NOT return to user until all log files are written
+- Do NOT spawn sub-agents with run_in_background: true (SA5)
 
 ---
 
@@ -88,9 +101,9 @@ This skill uses a **multi-stage pipeline with sub-agents**. You are the orchestr
 ```fsharp
 // {skill-name} pipeline
 Stage0_PreFlight(args)
-|> Stage1_{Name}(input)        // {Model} sub-agent — {purpose}
-|> Stage2_{Name}(stage1_output) // {Model} sub-agent — {purpose}
-|> Stage3_{Name}(stage2_output) // {Model} sub-agent — {purpose}
+|> Stage1_{Name}(input)        // {skill-name}-{stage1} sub-agent — {purpose}
+|> Stage2_{Name}(stage1_output) // {skill-name}-{stage2} sub-agent — {purpose}
+|> Stage3_{Name}(stage2_output) // {skill-name}-{stage3} sub-agent — {purpose}
 |> Diagnostics(all_outputs)
 ```
 
@@ -108,7 +121,7 @@ Stage 0: Pre-Flight
 └── Token budget check
 ```
 
-### Stage 1: {Name} ({Model} sub-agent)
+### Stage 1: {Name} (Dedicated sub-agent)
 
 ```
 Construct prompt using 4-part template:
@@ -117,11 +130,11 @@ Construct prompt using 4-part template:
 ├── CONTEXT: {input data, reference files to read}
 └── OUTPUT: Write to logs/{skill-name}-stage1-{timestamp}.{ext}
 
-Spawn: Task(subagent_type="general-purpose", model="{model}", prompt=...)
+Spawn: Task(subagent_type="{skill-name}-{stage1-name}", prompt=...)
 Read output from logs/
 ```
 
-### Stage 2: {Name} ({Model} sub-agent)
+### Stage 2: {Name} (Dedicated sub-agent)
 
 {Same structure as Stage 1, reading Stage 1 output as input.}
 
@@ -149,12 +162,52 @@ Write to `logs/diagnostics/{skill-name}-{YYYYMMDD-HHMMSS}.yaml`
 - [ ] Results presented to user
 ```
 
+## Generated Sub-Agent Structure
+
+Each pipeline stage gets a dedicated agent file at `.claude/agents/{skill-name}-{stage-name}.md`. Use the `references/agent-template.md` structure and follow `references/agent-conventions.md` conventions.
+
+Key requirements for generated sub-agents:
+
+- **System-prompt register**: The agent body defines WHO the agent IS, not step-by-step instructions
+- **Identity reflects stage role**: "You are a security reviewer" not "You are Stage 2"
+- **Single-purpose**: Each sub-agent does one thing well
+- **SA2 compliant**: All output goes to `logs/`
+- **Permissions Setup section**: Documents required tool permissions
+- **150-250 lines each**: Keep sub-agents focused
+
+### Sub-Agent Naming
+
+```
+{skill-name}-{stage-role}.md
+```
+
+Examples:
+- `code-review-security-reviewer.md`
+- `code-review-type-safety-reviewer.md`
+- `test-audit-classifier.md`
+- `test-audit-deep-analyzer.md`
+
+### Sub-Agent Model Selection
+
+| Stage Purpose | Model | Rationale |
+|---------------|-------|-----------|
+| Quick lookups, classification | haiku | Fast, low-cost |
+| Analysis, review, research | sonnet | Balanced capability |
+| Implementation, architecture | opus | Highest quality |
+
+Default to **Sonnet** for most pipeline stages.
+
 ## Guidance for Generator
 
-- Every sub-agent stage needs a 4-part prompt (GOAL/CONSTRAINTS/CONTEXT/OUTPUT)
-- Include the `subagent-prompting` skill in frontmatter `skills:` dependency
+- Generate BOTH the orchestrating SKILL.md AND the sub-agent `.md` files
+- The orchestrating skill references sub-agents by `Task(subagent_type="{name}")`, not inline definitions
+- Every sub-agent stage needs a 4-part prompt (GOAL/CONSTRAINTS/CONTEXT/OUTPUT) in the orchestrating skill
+- Include the `subagent-prompting` skill in the orchestrating skill's frontmatter `skills:` dependency
 - Use the Pre-Flight Gate pattern — without it, Claude skips sub-agent spawning
 - Model selection per stage: Haiku for lookups, Sonnet for analysis, Opus for writing
 - Each stage writes to `logs/` — the next stage reads from there (log-based handoff between stages)
 - Include F# pipeline notation for visual workflow documentation
-- Pipeline skills are typically 200-400 lines
+- Orchestrating skill is typically 200-400 lines
+- Each sub-agent is typically 150-250 lines
+- Read `references/agent-template.md` for the sub-agent file structure
+- Read `references/agent-conventions.md` for system-prompt register and frontmatter conventions
