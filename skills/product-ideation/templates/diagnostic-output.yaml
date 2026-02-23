@@ -1,0 +1,25 @@
+diagnostic:
+  skill: product-ideation
+  timestamp: "{ISO-8601}"
+  invocation:
+    input_type: "description | file"
+    input_value: "{product idea or file path}"
+  interview:
+    rounds: "{count}"
+    questions_asked: "{count}"
+  pipeline:
+    stages_completed: "{count}"
+    parallel_batch_1:
+      idea_validator: "success | failed | skipped"
+      market_researcher: "success | failed | skipped"
+    competitive_analyzer: "success | failed | skipped"
+    parallel_batch_2:
+      pattern_documenter: "success | failed | skipped"
+      segment_analyzer: "success | failed | skipped"
+    strategist: "success | failed | skipped"
+  output:
+    final_report: "{path}"
+    recommendation: "BUY | HOLD | SELL"
+    confidence: "High | Medium | Low"
+  outcome: "success | partial | failure"
+  errors: []
