@@ -299,5 +299,5 @@ Add to `.claude/settings.json` or `.claude/settings.local.json`:
 - [ ] Primary segment identified with rationale
 - [ ] Segment-to-market-gap mapping completed
 - [ ] Segments report written to `$PROJECT_DIR/logs/`
-- [ ] Diagnostic YAML written to `$PROJECT_DIR/logs/`diagnostics/
+- [ ] Diagnostic YAML written to `$PROJECT_DIR/logs/diagnostics/`
 - [ ] Summary returned to orchestrator

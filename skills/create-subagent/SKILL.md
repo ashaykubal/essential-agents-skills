@@ -5,6 +5,7 @@ user-invocable: true
 argument-hint: "<description-or-name> [--doc <requirements-path>]"
 skills:
   - subagent-prompting
+  - anthropic-validator
 ---
 
 # Create Sub-Agent

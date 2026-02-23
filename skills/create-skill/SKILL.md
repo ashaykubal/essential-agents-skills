@@ -1,7 +1,7 @@
 ---
 name: create-skill
 description: Generates Claude Code skills from requirements using adaptive interview, complexity classification, and iterative validation. Use when creating new skills, scaffolding skill structure, or generating skills with sub-agent orchestration.
-user-invocable: true
+disable-model-invocation: true
 argument-hint: "<description-or-name> [--doc <requirements-path>]"
 skills:
   - subagent-prompting

@@ -255,5 +255,5 @@ Add to `.claude/settings.json` or `.claude/settings.local.json`:
 - [ ] Confidence level assigned: exactly High, Medium, or Low
 - [ ] Final report written using template structure to logs/
 - [ ] Appropriate conditional section populated (Path Forward / What Needs to Change / Pass on This Idea)
-- [ ] Diagnostic YAML written to `$PROJECT_DIR/logs/`diagnostics/
+- [ ] Diagnostic YAML written to `$PROJECT_DIR/logs/diagnostics/`
 - [ ] Summary returned to orchestrator

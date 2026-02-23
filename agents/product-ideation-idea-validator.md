@@ -264,5 +264,5 @@ Add to `.claude/settings.json` or `.claude/settings.local.json`:
 - [ ] Four dimensions evaluated with evidence
 - [ ] Verdict determined with clear reasoning
 - [ ] Validation report written to `$PROJECT_DIR/logs/`
-- [ ] Diagnostic YAML written to `$PROJECT_DIR/logs/`diagnostics/
+- [ ] Diagnostic YAML written to `$PROJECT_DIR/logs/diagnostics/`
 - [ ] Summary returned to orchestrator

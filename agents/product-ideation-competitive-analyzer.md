@@ -294,5 +294,5 @@ Add to `.claude/settings.json` or `.claude/settings.local.json`:
 - [ ] Porter's Five Forces scored for all 5 forces
 - [ ] Market gap assessment stated clearly
 - [ ] Competitive analysis report written to `$PROJECT_DIR/logs/`
-- [ ] Diagnostic YAML written to `$PROJECT_DIR/logs/`diagnostics/
+- [ ] Diagnostic YAML written to `$PROJECT_DIR/logs/diagnostics/`
 - [ ] Summary returned to orchestrator

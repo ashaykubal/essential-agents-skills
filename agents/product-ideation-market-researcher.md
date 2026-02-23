@@ -288,5 +288,5 @@ Add to `.claude/settings.json` or `.claude/settings.local.json`:
 - [ ] Key players listed (5-10 names)
 - [ ] PESTLE assessment completed for all 6 factors
 - [ ] Market research report written to `$PROJECT_DIR/logs/`
-- [ ] Diagnostic YAML written to `$PROJECT_DIR/logs/`diagnostics/
+- [ ] Diagnostic YAML written to `$PROJECT_DIR/logs/diagnostics/`
 - [ ] Summary returned to orchestrator

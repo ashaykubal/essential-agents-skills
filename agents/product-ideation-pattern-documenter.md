@@ -1,6 +1,6 @@
 ---
 name: product-ideation-pattern-documenter
-description: Documents success and failure patterns from the competitive landscape, produces competitor profiles with trajectory analysis, and identifies opportunity gaps. Reads competitive analysis output from logs/. Use when the orchestrator needs success/failure pattern analysis from competitive data.
+description: Analyzes competitive data to document success/failure patterns, competitor trajectories, and opportunity gaps. Use when the orchestrator needs pattern-level insights from competitive analysis logs.
 model: sonnet
 tools:
   - Read
@@ -304,5 +304,5 @@ Add to `.claude/settings.json` or `.claude/settings.local.json`:
 - [ ] Competitor trajectory profiles written for 3-5 major players
 - [ ] Opportunity gap analysis completed
 - [ ] Patterns report written to `$PROJECT_DIR/logs/`
-- [ ] Diagnostic YAML written to `$PROJECT_DIR/logs/`diagnostics/
+- [ ] Diagnostic YAML written to `$PROJECT_DIR/logs/diagnostics/`
 - [ ] Summary returned to orchestrator
