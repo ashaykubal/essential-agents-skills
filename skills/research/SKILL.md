@@ -75,7 +75,7 @@ Stage 1: Pre-Flight
 ├── Read problem statement / document
 ├── AskUserQuestion if ambiguous (iterative, 2-3 questions per round)
 ├── Slugify topic for output directory
-├── Create output directory: logs/research/{topic-slug}/
+├── Create output directories: $PROJECT_DIR/logs/research/{topic-slug}/ and $PROJECT_DIR/artifacts/research/{topic-slug}/
 ├── Load subagent-prompting skill
 ├── Load all 5 references/viewpoint-*.md
 ├── Load templates/viewpoint-output.md
@@ -101,7 +101,7 @@ Stage 2: Viewpoint Analysis
 │   ├── Viewpoint definition from references/viewpoint-{name}.md
 │   ├── Output template from templates/viewpoint-output.md
 │   ├── Topic description + any user-provided context
-│   └── Output path: logs/research/{topic-slug}/{NN}-{viewpoint-slug}.md
+│   └── Output path: $PROJECT_DIR/logs/research/{topic-slug}/{NN}-{viewpoint-slug}.md
 ├── Spawn all 5 agents in parallel via Task tool
 │   ├── subagent_type: general-purpose
 │   ├── model: sonnet
@@ -119,7 +119,7 @@ Stage 3: Synthesis
 ├── If any output is missing or empty → re-spawn that agent once (max 1 retry)
 ├── If retry fails → document gap in synthesis under "Incomplete Coverage"
 ├── Load templates/synthesis-output.md
-├── Write synthesis to logs/research/{topic-slug}/synthesis.md
+├── Write synthesis to $PROJECT_DIR/artifacts/research/{topic-slug}/synthesis.md
 ├── AskUserQuestion for user on open questions (iterative, 2-3 per round)
 ├── Critical Evaluation Gate (see below)
 └── Token budget check (must be <65% after synthesis)
@@ -154,7 +154,7 @@ After each AskUserQuestion round, do NOT blindly incorporate user responses. Ins
    - **Contrarian** — focused on finding failure modes and alternatives for the specific claim/solution
 2. Use the same 4-part prompt template (GOAL/CONSTRAINTS/CONTEXT/OUTPUT)
 3. Include the REASONING DEPTH instructions from the viewpoint reference docs
-4. Output to: `logs/research/{topic-slug}/followup-{NN}-direct-investigation.md` and `followup-{NN}-contrarian.md`
+4. Output to: `$PROJECT_DIR/logs/research/{topic-slug}/followup-{NN}-direct-investigation.md` and `followup-{NN}-contrarian.md`
 5. Read both outputs, then update synthesis with validated findings
 6. Tag follow-up findings in synthesis with: `[Follow-up: validated]` or `[Follow-up: refuted]` or `[Follow-up: mixed — see details]`
 
@@ -169,7 +169,7 @@ Incorporate the user's suggestion into synthesis with an explicit caveat:
 
 ```
 Stage 4: Diagnostics
-├── Write diagnostic YAML to logs/diagnostics/research-{YYYYMMDD-HHMMSS}.yaml
+├── Write diagnostic YAML to $PROJECT_DIR/logs/diagnostics/research-{YYYYMMDD-HHMMSS}.yaml
 └── Verify completion checklist
 ```
 
@@ -273,7 +273,7 @@ If token budget is insufficient to complete all 5 agents + synthesis, inform the
 
 **MANDATORY**: You MUST write diagnostic output after every invocation. This is Stage 4 and cannot be skipped.
 
-Write to: `logs/diagnostics/research-{YYYYMMDD-HHMMSS}.yaml`
+Write to: `$PROJECT_DIR/logs/diagnostics/research-{YYYYMMDD-HHMMSS}.yaml`
 
 **Template**: Use `templates/diagnostic-output.yaml` for the schema. Fill in actual values from the session.
 
@@ -286,12 +286,13 @@ Write to: `logs/diagnostics/research-{YYYYMMDD-HHMMSS}.yaml`
 - [ ] Stage 1: Pre-flight complete (topic defined, directories created, skills loaded)
 - [ ] Stage 1: AskUserQuestion used if topic was ambiguous
 - [ ] Stage 2: All 5 viewpoint agents spawned in parallel
-- [ ] Stage 2: All agent outputs written to `logs/research/{topic-slug}/`
+- [ ] Stage 2: All agent outputs written to `$PROJECT_DIR/logs/research/{topic-slug}/`
 - [ ] Stage 3: ALL 5 outputs read before writing synthesis
 - [ ] Stage 3: Synthesis written using `templates/synthesis-output.md`
 - [ ] Stage 3: AskUserQuestion used for post-synthesis review
 - [ ] Stage 3: Critical Evaluation Gate applied to all user responses (classified as Factual/Opinion/Speculative)
 - [ ] Stage 3: Follow-up research spawned for Speculative responses (or user declined with caveat added)
-- [ ] Stage 4: Diagnostic YAML written to `logs/diagnostics/`
+- [ ] Stage 3: Synthesis written to `$PROJECT_DIR/artifacts/research/{topic-slug}/synthesis.md`
+- [ ] Stage 4: Diagnostic YAML written to `$PROJECT_DIR/logs/diagnostics/`
 
 **Do NOT return to user until all checkboxes can be marked complete.**

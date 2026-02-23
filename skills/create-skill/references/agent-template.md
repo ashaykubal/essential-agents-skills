@@ -95,8 +95,8 @@ This agent is invoked via the **Task tool**:
 
 ### Step 4: Write Output
 
-1. Write main report to `logs/{agent-name}-{timestamp}.{ext}`
-2. Write diagnostics to `logs/diagnostics/{agent-name}-{timestamp}.yaml`
+1. Write main report to `$PROJECT_DIR/logs/{agent-name}-{timestamp}.{ext}`
+2. Write diagnostics to `$PROJECT_DIR/logs/diagnostics/{agent-name}-{timestamp}.yaml`
 
 ### Step 5: Return Summary
 
@@ -119,13 +119,13 @@ Return a summary to the invoker (100-300 tokens). Include:
 
 ### Main Report
 
-**Location**: `logs/{agent-name}-{timestamp}.{ext}`
+**Location**: `$PROJECT_DIR/logs/{agent-name}-{timestamp}.{ext}`
 
 {Report format specification.}
 
 ### Diagnostics
 
-**Location**: `logs/diagnostics/{agent-name}-{timestamp}.yaml`
+**Location**: `$PROJECT_DIR/logs/diagnostics/{agent-name}-{timestamp}.yaml`
 
 \`\`\`yaml
 diagnostic:
@@ -142,7 +142,7 @@ diagnostic:
     errors: 0
 
   output:
-    report_path: "logs/{agent-name}-{timestamp}.{ext}"
+    report_path: "$PROJECT_DIR/logs/{agent-name}-{timestamp}.{ext}"
     verdict: "{pass/fail/complete/partial}"
 \`\`\`
 
@@ -176,7 +176,7 @@ Add to `.claude/settings.json` or `.claude/settings.local.json`:
 ## Completion Checklist
 
 - [ ] All steps executed
-- [ ] Main report written to `logs/`
+- [ ] Main report written to `$PROJECT_DIR/logs/`
 - [ ] Diagnostic YAML written
 - [ ] Summary returned to invoker
 ```

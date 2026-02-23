@@ -112,7 +112,7 @@ Scripts:
 
 ### Stage N: Diagnostics (REQUIRED)
 
-Write to `logs/diagnostics/{skill-name}-{YYYYMMDD-HHMMSS}.yaml`
+Write to `$PROJECT_DIR/logs/diagnostics/{skill-name}-{YYYYMMDD-HHMMSS}.yaml`
 
 ---
 

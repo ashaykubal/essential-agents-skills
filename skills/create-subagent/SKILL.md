@@ -71,34 +71,31 @@ Sub-agents are invoked via `Task(subagent_type=...)` and run in a forked context
 
 ---
 
-## Pre-Flight Gate (BLOCKING)
+## Mandatory Execution Checklist (BINDING)
 
-**STOP. Before ANY work, you MUST acknowledge what this skill requires.**
+**Every item below is mandatory. No deviations. No substitutions. No skipping.**
 
-This skill uses a **6-stage pipeline with sub-agents**. You are the orchestrator, NOT the generator.
+This skill uses a 6-stage pipeline. You are the orchestrator. Follow every item in order. Do NOT return to the user until all applicable items are checked.
 
-### What You MUST Do
-
-1. Conduct an adaptive interview (Stage 0)
-2. Check for pipeline/teams routing — redirect to create-skill if detected (Stage 0)
-3. Classify using two independent decisions (Stage 1)
-4. Present classification to user for confirmation
-5. Spawn a Sonnet sub-agent to generate the agent file (Stage 2)
-6. Run anthropic-validator on the generated output (Stage 3)
-7. If validation fails, spawn a Sonnet sub-agent to fix issues (Stage 4, max 2 retries)
-8. Present the scaffold with architectural decisions (Stage 5)
-9. Write diagnostic YAML (Stage 6)
-
-### What You MUST NOT Do
-
-- **Do NOT generate the agent file yourself** — spawn a sub-agent (Stage 2)
-- **Do NOT skip the interview** — it determines tool permissions and configuration
-- **Do NOT skip validation** — anthropic-validator catches structural issues
-- **Do NOT skip the post-generation summary** — users need to know what was decided and why
-- **Do NOT write agents in task-instruction register** — agents use system-prompt register (WHO, not WHAT)
-- **Do NOT generate pipeline orchestrator or Agent Teams agents** — redirect to create-skill
-
-If you find yourself thinking "I can generate this directly without a sub-agent" — STOP. The sub-agent reads templates, agent-conventions, and content guidance that produce structurally correct output. The pipeline exists for consistency, not speed.
+- [ ] **Stage 0 — Pre-Flight**: Arguments parsed (description, name, or --doc)
+- [ ] **Stage 0 — Pre-Flight**: Decision framework, agent conventions, and content guidance loaded
+- [ ] **Stage 0 — Pre-Flight**: Adaptive interview conducted (1-2 rounds via AskUserQuestion)
+- [ ] **Stage 0 — Pre-Flight**: Routing check completed (pipeline/teams → redirect to create-skill and STOP, OR single → proceed)
+- [ ] **Stage 1 — Classify**: Two decisions made (tool permissions, supporting configuration)
+- [ ] **Stage 1 — Classify**: Classification presented to user and confirmed via AskUserQuestion
+- [ ] **Stage 2 — Generate**: Sonnet sub-agent spawned via Task tool (you do NOT generate the file yourself)
+- [ ] **Stage 2 — Generate**: Generated agent file verified to exist in working directory
+- [ ] **Stage 2 — Generate**: Agent uses system-prompt register (identity statement, not task steps)
+- [ ] **Stage 3 — Validate**: `/anthropic-validator` invoked via Skill tool (manual review is NOT a substitute)
+- [ ] **Stage 3 — Validate**: Validator output read and findings counted
+- [ ] **Stage 3 — Validate**: Manual checks completed (single-line description, system-prompt register, permissions section)
+- [ ] **Stage 4 — Refine**: If validation found critical/high issues, Sonnet sub-agent spawned to fix (max 2 retries)
+- [ ] **Stage 5 — Deploy**: Agent file deployed from working directory to `.claude/agents/`
+- [ ] **Stage 5 — Deploy**: Working directory cleaned up
+- [ ] **Stage 5 — Present**: Post-generation summary presented with architectural decisions
+- [ ] **Stage 5 — Present**: Permissions setup steps communicated
+- [ ] **Stage 5 — Present**: Next steps communicated (this is a scaffold, not production-ready output)
+- [ ] **Stage 6 — Diagnostics**: Diagnostic YAML written to `$PROJECT_DIR/logs/diagnostics/`
 
 ---
 
@@ -237,15 +234,22 @@ Stage 2: Generate
 
 ```
 Stage 3: Validate
-├── Invoke /anthropic-validator on the working directory
-│   └── (Load the anthropic-validator skill and follow its workflow against {working-directory}/{agent-name}.md)
+├── FIRST: Invoke /anthropic-validator (this is the PRIMARY validation — NOT optional)
+│   ├── Use the Skill tool: Skill(skill="anthropic-validator", args="{working-directory}/{agent-name}.md")
+│   ├── Do NOT substitute manual review for this step
+│   └── Do NOT proceed past this node until the Skill tool has been invoked
 ├── Read validator output
 ├── Check for critical/high findings:
 │   ├── 0 critical AND 0 high → proceed to Stage 5 (skip Stage 4)
 │   └── Any critical or high → proceed to Stage 4 (refine)
-├── Check description is single-line (read agent file, verify no multiline description)
-├── Check system-prompt register (body opens with identity, not task steps)
-└── Check Permissions Setup section exists
+├── THEN: Manual checks (these supplement the validator, they do NOT replace it)
+│   ├── Check description is single-line (read agent file, verify no multiline description)
+│   ├── Check system-prompt register (body opens with identity, not task steps)
+│   └── Check Permissions Setup section exists
+└── Stage 3 exit gate:
+    ├── [ ] /anthropic-validator was invoked via the Skill tool (not manual review)
+    ├── [ ] Validator output was read and findings counted
+    └── If either is unchecked, Stage 3 is NOT complete — go back and invoke the validator
 ```
 
 ### Stage 4: Refine (Sonnet sub-agent, conditional, max 2 retries)
@@ -307,7 +311,7 @@ Stage 5: Deploy & Present
 
 ```
 Stage 6: Diagnostics
-├── Write to: logs/diagnostics/create-subagent-{YYYYMMDD-HHMMSS}.yaml
+├── Write to: $PROJECT_DIR/logs/diagnostics/create-subagent-{YYYYMMDD-HHMMSS}.yaml
 │   └── Use templates/diagnostic-output.yaml schema
 └── Include:
     ├── Input: description/name/doc path
@@ -346,28 +350,3 @@ Stage 6: Diagnostics
 | After Generate | >55% consumed | Warn: "Approaching budget. Validation + refinement may be limited." |
 | After Validate | >65% consumed | Skip refinement if needed, present as-is with caveats. |
 
----
-
-## Completion Checklist
-
-**IMPORTANT**: Before returning to the user, verify ALL items are complete:
-
-- [ ] Stage 0: Arguments parsed (description, name, or --doc)
-- [ ] Stage 0: Decision framework, agent conventions, and content guidance loaded
-- [ ] Stage 0: Adaptive interview conducted (1-2 rounds)
-- [ ] Stage 0: Routing check completed (pipeline/teams → redirected to create-skill, OR single → proceed)
-- [ ] Stage 1: Two decisions made (tool permissions, configuration)
-- [ ] Stage 1: Classification presented to user and confirmed
-- [ ] Stage 2: Sonnet sub-agent spawned for generation
-- [ ] Stage 2: Generated agent file verified to exist in working directory
-- [ ] Stage 2: Agent uses system-prompt register (identity, not task steps)
-- [ ] Stage 3: anthropic-validator run on generated agent
-- [ ] Stage 4: Refinement attempted if validation found critical/high issues
-- [ ] Stage 5: Agent file deployed from working directory to .claude/agents/
-- [ ] Stage 5: Working directory cleaned up
-- [ ] Stage 5: Post-generation summary presented with architectural decisions
-- [ ] Stage 5: Permissions setup steps communicated
-- [ ] Stage 5: Next steps communicated (scaffold, not production-ready)
-- [ ] Stage 6: Diagnostic YAML written to `logs/diagnostics/`
-
-**Do NOT return to user until all applicable checkboxes can be marked complete.**

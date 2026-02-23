@@ -123,11 +123,13 @@ Construct prompt using 4-part template:
 ├── CONSTRAINTS: Focus on {viewpoint-specific scope}, read-only analysis
 ├── CONTEXT: Topic description, relevant files/codebase areas,
 │   viewpoint definition from references/{name}.md
-└── OUTPUT: Write to logs/{skill-name}/{agent-name}.md
+└── OUTPUT: Write to $PROJECT_DIR/logs/{skill-name}/{agent-name}.md
             using templates/{agent-output-template}.md format
 
 Spawn: Task(subagent_type="general-purpose", model="{model}", prompt=...)
 ```
+
+**IMPORTANT — output paths**: `$PROJECT_DIR` is the project root directory (where `.claude/` lives). All paths MUST be project-root-relative using this prefix. Do NOT write to the skill directory or CWD.
 
 **Parallel**: Spawn all agents without waiting for each other.
 **Sequential**: Each agent reads previous agent's output before running.
@@ -136,17 +138,19 @@ Spawn: Task(subagent_type="general-purpose", model="{model}", prompt=...)
 
 ```
 Stage 2: Synthesis
-├── Read all agent outputs from logs/{skill-name}/
+├── Read all agent outputs from $PROJECT_DIR/logs/{skill-name}/
 ├── Identify convergent findings (multiple agents agree)
 ├── Identify divergent findings (agents disagree — flag for user)
-├── Write synthesis to logs/{skill-name}/synthesis.md
+├── Write synthesis to $PROJECT_DIR/artifacts/{skill-name}/{topic-slug}/synthesis.md
 │   using templates/{synthesis-output-template}.md format
 └── Present key findings to user
 ```
 
+**Note**: Synthesis is a deliverable — it goes to `artifacts/`, not `logs/`. Agent intermediate output stays in `logs/`.
+
 ### Stage 3: Diagnostics (REQUIRED)
 
-Write to `logs/diagnostics/{skill-name}-{YYYYMMDD-HHMMSS}.yaml`
+Write to `$PROJECT_DIR/logs/diagnostics/{skill-name}-{YYYYMMDD-HHMMSS}.yaml`
 
 ---
 
@@ -164,8 +168,8 @@ Write to `logs/diagnostics/{skill-name}-{YYYYMMDD-HHMMSS}.yaml`
 
 - [ ] Interview conducted (1-2 rounds)
 - [ ] All agents spawned and completed
-- [ ] All agent outputs in `logs/{skill-name}/`
-- [ ] Synthesis written to `logs/{skill-name}/synthesis.md`
+- [ ] All agent outputs in `$PROJECT_DIR/logs/{skill-name}/`
+- [ ] Synthesis written to `$PROJECT_DIR/artifacts/{skill-name}/{topic-slug}/synthesis.md`
 - [ ] Diagnostic YAML written
 - [ ] Key findings presented to user
 ```

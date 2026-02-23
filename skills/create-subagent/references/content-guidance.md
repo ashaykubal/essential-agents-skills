@@ -157,11 +157,11 @@ Writing an agent body as step-by-step task instructions instead of identity and 
 Hardcoding specific file paths in the agent body for a single use case.
 
 ```markdown
-# WRONG — too specific
+# WRONG — too specific, no $PROJECT_DIR prefix
 Write your report to logs/security-review-PR-123.md
 
-# CORRECT — parameterized convention
-Write your report to logs/{agent-name}-{timestamp}.md
+# CORRECT — parameterized convention with $PROJECT_DIR
+Write your report to $PROJECT_DIR/logs/{agent-name}-{timestamp}.md
 ```
 
 **Impact**: Agent only works for one invocation pattern.
@@ -176,7 +176,7 @@ Agents with Write/Edit/Bash access but no constraints on what they can modify.
 ## Tool Usage Constraints
 
 ### Write
-- **Allowed**: Source files (within scope), logs/
+- **Allowed**: Source files (within scope), $PROJECT_DIR/logs/
 - **Forbidden**: Config files, files outside task scope
 
 ### Bash
@@ -193,7 +193,7 @@ Agents that complete work but produce no observable artifact for the orchestrato
 ```markdown
 ## Diagnostic Output
 
-Write to: logs/diagnostics/{agent-name}-{timestamp}.yaml
+Write to: $PROJECT_DIR/logs/diagnostics/{agent-name}-{timestamp}.yaml
 ```
 
 ### Pitfall 5: Missing Permissions Documentation

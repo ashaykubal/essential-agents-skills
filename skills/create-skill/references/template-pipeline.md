@@ -84,8 +84,9 @@ This skill uses a **multi-stage pipeline with dedicated sub-agents**. You are th
 1. Load all required dependencies
 2. Execute stages in order (or parallel where specified)
 3. Spawn dedicated sub-agents for each stage via Task tool — do NOT perform their work yourself
-4. Write all outputs to `logs/`
-5. Write diagnostic YAML at completion
+4. Write intermediate stage outputs to `$PROJECT_DIR/logs/`
+5. Write final deliverables (synthesis, reports) to `$PROJECT_DIR/artifacts/`
+6. Write diagnostic YAML to `$PROJECT_DIR/logs/diagnostics/`
 
 ### What You MUST NOT Do
 
@@ -128,10 +129,10 @@ Construct prompt using 4-part template:
 ├── GOAL: {what this stage achieves}
 ├── CONSTRAINTS: {boundaries}
 ├── CONTEXT: {input data, reference files to read}
-└── OUTPUT: Write to logs/{skill-name}-stage1-{timestamp}.{ext}
+└── OUTPUT: Write to $PROJECT_DIR/logs/{skill-name}/{stage1-name}-{timestamp}.{ext}
 
 Spawn: Task(subagent_type="{skill-name}-{stage1-name}", prompt=...)
-Read output from logs/
+Read output from $PROJECT_DIR/logs/{skill-name}/
 ```
 
 ### Stage 2: {Name} (Dedicated sub-agent)
@@ -140,7 +141,7 @@ Read output from logs/
 
 ### Stage N: Diagnostics (REQUIRED)
 
-Write to `logs/diagnostics/{skill-name}-{YYYYMMDD-HHMMSS}.yaml`
+Write to `$PROJECT_DIR/logs/diagnostics/{skill-name}-{YYYYMMDD-HHMMSS}.yaml`
 
 ---
 
@@ -157,8 +158,9 @@ Write to `logs/diagnostics/{skill-name}-{YYYYMMDD-HHMMSS}.yaml`
 ## Completion Checklist
 
 - [ ] All stages executed
-- [ ] All log files written to `logs/`
-- [ ] Diagnostic YAML written
+- [ ] Intermediate stage outputs written to `$PROJECT_DIR/logs/{skill-name}/`
+- [ ] Final deliverables written to `$PROJECT_DIR/artifacts/{skill-name}/{slug}/`
+- [ ] Diagnostic YAML written to `$PROJECT_DIR/logs/diagnostics/`
 - [ ] Results presented to user
 ```
 
@@ -171,7 +173,7 @@ Key requirements for generated sub-agents:
 - **System-prompt register**: The agent body defines WHO the agent IS, not step-by-step instructions
 - **Identity reflects stage role**: "You are a security reviewer" not "You are Stage 2"
 - **Single-purpose**: Each sub-agent does one thing well
-- **SA2 compliant**: All output goes to `logs/`
+- **SA2 compliant**: All intermediate output goes to `$PROJECT_DIR/logs/`, deliverables to `$PROJECT_DIR/artifacts/`
 - **Permissions Setup section**: Documents required tool permissions
 - **150-250 lines each**: Keep sub-agents focused
 
@@ -205,7 +207,9 @@ Default to **Sonnet** for most pipeline stages.
 - Include the `subagent-prompting` skill in the orchestrating skill's frontmatter `skills:` dependency
 - Use the Pre-Flight Gate pattern — without it, Claude skips sub-agent spawning
 - Model selection per stage: Haiku for lookups, Sonnet for analysis, Opus for writing
-- Each stage writes to `logs/` — the next stage reads from there (log-based handoff between stages)
+- Each stage writes to `$PROJECT_DIR/logs/{skill-name}/` — the next stage reads from there (log-based handoff between stages)
+- Final deliverables (synthesis, reports) go to `$PROJECT_DIR/artifacts/{skill-name}/{slug}/` — NOT to `logs/`
+- **IMPORTANT**: `$PROJECT_DIR` is the project root (where `.claude/` lives). All paths MUST use this prefix. Do NOT write to the skill directory, CWD, or `.claude/skills/`.
 - Include F# pipeline notation for visual workflow documentation
 - Orchestrating skill is typically 200-400 lines
 - Each sub-agent is typically 150-250 lines

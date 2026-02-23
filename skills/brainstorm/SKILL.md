@@ -64,7 +64,7 @@ Role-based brainstorming on a given topic. Spawns 5 Opus sub-agents in a sequenc
 - `--research <synthesis-file>` - Path to Phase 1 research synthesis (from bulwark-research). Strongly recommended.
 
 **Examples:**
-- `/brainstorm "agent teams" --research logs/research/agent-teams/synthesis.md` - Brainstorm with research
+- `/brainstorm "agent teams" --research artifacts/research/agent-teams/synthesis.md` - Brainstorm with research
 - `/brainstorm --doc plans/proposal.md` - Brainstorm from a document
 - `/brainstorm "loop detection"` - Brainstorm without prior research (warn user)
 
@@ -80,7 +80,7 @@ Stage 1: Pre-Flight
 ├── Load research synthesis if --research provided
 ├── AskUserQuestion if ambiguous (iterative, 2-3 questions per round)
 ├── Slugify topic for output directory
-├── Create output directory: logs/brainstorm/{topic-slug}/
+├── Create output directories: $PROJECT_DIR/logs/brainstorm/{topic-slug}/ and $PROJECT_DIR/artifacts/brainstorm/{topic-slug}/
 ├── Load subagent-prompting skill
 ├── Load references/role-project-sme.md (needed for Stage 2)
 └── Token budget check (warn if >30% consumed)
@@ -106,7 +106,7 @@ Stage 2: Project SME
 ├── Construct prompt using 4-part template
 │   ├── GOAL: Establish project context relevant to the topic
 │   ├── CONTEXT: Problem statement + research synthesis (if available)
-│   └── OUTPUT: logs/brainstorm/{topic-slug}/01-project-sme.md
+│   └── OUTPUT: $PROJECT_DIR/logs/brainstorm/{topic-slug}/01-project-sme.md
 ├── Spawn general-purpose Opus agent
 │   ├── Agent autonomously explores codebase (Glob, Grep, Read)
 │   ├── NO hardcoded document paths — agent discovers what's relevant
@@ -135,7 +135,7 @@ Stage 3: Role Analysis
 ├── Load templates/role-output.md
 ├── Construct 3 prompts using 4-part template
 │   ├── Each receives: problem statement + research synthesis + SME output
-│   └── Each writes to: logs/brainstorm/{topic-slug}/{NN}-{role-slug}.md
+│   └── Each writes to: $PROJECT_DIR/logs/brainstorm/{topic-slug}/{NN}-{role-slug}.md
 ├── Spawn all 3 agents in parallel via Task tool
 │   ├── subagent_type: general-purpose
 │   ├── model: opus
@@ -159,7 +159,7 @@ Stage 4: Critical Analyst
 │   │   ├── PM output (02-product-manager.md)
 │   │   ├── Architect output (03-technical-architect.md)
 │   │   └── Dev Lead output (04-development-lead.md)
-│   └── OUTPUT: logs/brainstorm/{topic-slug}/05-critical-analyst.md
+│   └── OUTPUT: $PROJECT_DIR/logs/brainstorm/{topic-slug}/05-critical-analyst.md
 ├── Spawn general-purpose Opus agent
 ├── Read Critical Analyst output
 └── Token budget check
@@ -175,7 +175,7 @@ Stage 5: Synthesis
 ├── If any output is missing or empty → re-spawn that agent once (max 1 retry)
 ├── If retry fails → document gap in synthesis under "Incomplete Coverage"
 ├── Load templates/synthesis-output.md
-├── Write synthesis to logs/brainstorm/{topic-slug}/synthesis.md
+├── Write synthesis to $PROJECT_DIR/artifacts/brainstorm/{topic-slug}/synthesis.md
 ├── AskUserQuestion for user on open questions (iterative, 2-3 per round)
 ├── Critical Evaluation Gate (see below)
 └── Token budget check (must be <65% after synthesis)
@@ -215,7 +215,7 @@ After each AskUserQuestion round, do NOT blindly incorporate user responses. Ins
      Include the Highest-Risk Assumption Focus reasoning depth instructions.
 2. Use the same 4-part prompt template (GOAL/CONSTRAINTS/CONTEXT/OUTPUT)
 3. Provide both agents with: original research synthesis, SME output, and the specific user suggestion
-4. Output to: `logs/brainstorm/{topic-slug}/followup-{NN}-architect.md` and `followup-{NN}-critic.md`
+4. Output to: `$PROJECT_DIR/logs/brainstorm/{topic-slug}/followup-{NN}-architect.md` and `followup-{NN}-critic.md`
 5. Read both outputs, then update synthesis with validated findings
 6. Tag follow-up findings in synthesis with: `[Follow-up: validated]` or `[Follow-up: refuted]` or `[Follow-up: mixed — see details]`
 
@@ -230,7 +230,7 @@ Incorporate the user's suggestion into synthesis with an explicit caveat:
 
 ```
 Stage 6: Diagnostics
-├── Write diagnostic YAML to logs/diagnostics/brainstorm-{YYYYMMDD-HHMMSS}.yaml
+├── Write diagnostic YAML to $PROJECT_DIR/logs/diagnostics/brainstorm-{YYYYMMDD-HHMMSS}.yaml
 └── Verify completion checklist
 ```
 
@@ -361,7 +361,7 @@ If token budget is insufficient to complete all 5 agents + synthesis, inform the
 
 **MANDATORY**: You MUST write diagnostic output after every invocation. This is Stage 6 and cannot be skipped.
 
-Write to: `logs/diagnostics/brainstorm-{YYYYMMDD-HHMMSS}.yaml`
+Write to: `$PROJECT_DIR/logs/diagnostics/brainstorm-{YYYYMMDD-HHMMSS}.yaml`
 
 **Template**: Use `templates/diagnostic-output.yaml` for the schema. Fill in actual values from the session.
 
@@ -377,7 +377,7 @@ Write to: `logs/diagnostics/brainstorm-{YYYYMMDD-HHMMSS}.yaml`
 - [ ] Stage 2: Project SME spawned (Opus) and output read
 - [ ] Stage 2: SME explored codebase autonomously (no hardcoded paths)
 - [ ] Stage 3: All 3 role agents spawned in parallel (Opus)
-- [ ] Stage 3: All role outputs written to `logs/brainstorm/{topic-slug}/`
+- [ ] Stage 3: All role outputs written to `$PROJECT_DIR/logs/brainstorm/{topic-slug}/`
 - [ ] Stage 4: Critical Analyst spawned with ALL prior outputs
 - [ ] Stage 4: Critic output read
 - [ ] Stage 5: ALL 5 outputs read before writing synthesis
@@ -385,6 +385,7 @@ Write to: `logs/diagnostics/brainstorm-{YYYYMMDD-HHMMSS}.yaml`
 - [ ] Stage 5: AskUserQuestion used for post-synthesis review
 - [ ] Stage 5: Critical Evaluation Gate applied to all user responses (classified as Preference/Technical Claim/Architectural Suggestion)
 - [ ] Stage 5: Follow-up validation spawned for Technical Claims/Architectural Suggestions (or user declined with caveat added)
-- [ ] Stage 6: Diagnostic YAML written to `logs/diagnostics/`
+- [ ] Stage 5: Synthesis written to `$PROJECT_DIR/artifacts/brainstorm/{topic-slug}/synthesis.md`
+- [ ] Stage 6: Diagnostic YAML written to `$PROJECT_DIR/logs/diagnostics/`
 
 **Do NOT return to user until all checkboxes can be marked complete.**

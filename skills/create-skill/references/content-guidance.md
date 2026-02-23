@@ -239,6 +239,37 @@ Negative triggers prevent false activations that waste tokens:
 
 ---
 
+## Output Path Conventions
+
+Generated skills MUST use `$PROJECT_DIR` as the prefix for all output paths. `$PROJECT_DIR` is the project root directory (where `.claude/` lives). Without this prefix, paths resolve relative to CWD — which during skill execution is often the skill directory itself (e.g., `.claude/skills/{skill-name}/`), causing output to be written into the skill directory.
+
+### Three Output Categories
+
+| Category | Path Convention | What Goes Here |
+|----------|----------------|----------------|
+| **Intermediate output** | `$PROJECT_DIR/logs/{skill-name}/` | Sub-agent reports, stage outputs, working files that feed the next stage |
+| **Diagnostics** | `$PROJECT_DIR/logs/diagnostics/{skill-name}-{timestamp}.yaml` | Pipeline execution metadata, timing, error counts |
+| **Deliverables** | `$PROJECT_DIR/artifacts/{skill-name}/{slug}/` | Synthesis documents, final reports, generated code — anything the user consumes directly |
+
+### Rules
+
+1. **Always prefix with `$PROJECT_DIR/`** — never use bare `logs/` or `artifacts/`
+2. **Synthesis is a deliverable, not a log** — write to `artifacts/`, not `logs/`
+3. **Sub-agent output is intermediate** — write to `logs/`, the next stage reads from there
+4. **Diagnostics are always in `logs/diagnostics/`** — never in `artifacts/`
+5. **Never write output into the skill directory** (`.claude/skills/{name}/`) or CWD
+
+### Example Paths
+
+```
+$PROJECT_DIR/logs/market-research/analyst.md           # intermediate (sub-agent output)
+$PROJECT_DIR/logs/market-research/competitor.md         # intermediate (sub-agent output)
+$PROJECT_DIR/logs/diagnostics/market-research-20260222.yaml  # diagnostic
+$PROJECT_DIR/artifacts/market-research/q1-analysis/synthesis.md  # deliverable
+```
+
+---
+
 ## Generate-and-Customize Contract
 
 All generated skills are scaffolds, not production-ready output. This must be communicated explicitly.

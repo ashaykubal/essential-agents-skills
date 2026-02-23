@@ -145,7 +145,7 @@ Add to `.claude/settings.json` or `.claude/settings.local.json`:
       "Read",
       "Glob",
       "Grep",
-      "Write(logs/*)"
+      "Write($PROJECT_DIR/logs/*)"
     ]
   }
 }
@@ -181,12 +181,14 @@ diagnostic:
 
 ### Log Output (SA2)
 
-All agent output goes to `logs/`. The agent definition should specify:
+All agent output goes to `$PROJECT_DIR/logs/`. The agent definition should specify:
 
 ```markdown
 ## Output
 
-Write all output to `logs/` directory:
-- Main report: `logs/{agent-name}-{timestamp}.{ext}`
-- Diagnostics: `logs/diagnostics/{agent-name}-{timestamp}.yaml`
+Write all output to `$PROJECT_DIR/logs/` directory (`$PROJECT_DIR` is the project root where `.claude/` lives):
+- Main report: `$PROJECT_DIR/logs/{agent-name}-{timestamp}.{ext}`
+- Diagnostics: `$PROJECT_DIR/logs/diagnostics/{agent-name}-{timestamp}.yaml`
 ```
+
+**IMPORTANT**: `$PROJECT_DIR` ensures paths resolve to the project root, not the skill directory or CWD. Without this prefix, agents may write output into `.claude/skills/` or other incorrect locations.
