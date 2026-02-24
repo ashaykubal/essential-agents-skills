@@ -1,0 +1,67 @@
+diagnostic:
+  skill: plan-creation
+  timestamp: "{ISO-8601 timestamp}"
+  invocation:
+    topic: "{topic description}"
+    source: prompt | document
+    research_file: null | "{path}"
+    mode: task-tool | agent-teams
+  agents:
+    total_spawned: 4
+    successful: "{count}"
+    retried: "{count}"
+    failed: "{count}"
+    agents_list:
+      - name: product-owner
+        subagent_type: plan-creation-po
+        model: opus
+        status: success | retried | failed
+        output_file: "logs/plan-creation/{slug}/01-product-owner.md"
+        stage: 2
+      - name: technical-architect
+        subagent_type: plan-creation-architect
+        model: opus
+        status: success | retried | failed
+        output_file: "logs/plan-creation/{slug}/02-technical-architect.md"
+        stage: 3
+      - name: eng-delivery-lead
+        subagent_type: plan-creation-eng-lead
+        model: sonnet
+        status: success | retried | failed
+        output_file: "logs/plan-creation/{slug}/03-eng-delivery-lead.md"
+        stage: 3
+      - name: qa-critic
+        subagent_type: plan-creation-qa-critic
+        model: sonnet
+        status: success | retried | failed
+        output_file: "logs/plan-creation/{slug}/04-qa-critic.md"
+        stage: 4
+  pre_flight_interview: skipped | completed
+  pre_flight_rounds: "{count}"
+  post_synthesis_interview: skipped | completed
+  post_synthesis_rounds: "{count}"
+  critical_evaluation_gate:
+    triggered: true | false
+    followup_agents_spawned: "{count}"
+  plan_output_file: "plans/{slug}/plan_v{N}.md"
+  plan_version: "v{N}"
+  plan_version_type: "new | major_bump | minor_bump"
+  synthesis_file: "logs/plan-creation/{slug}/synthesis.md"
+  token_checkpoints:
+    pre_spawn: "{percentage}"
+    post_po: "{percentage}"
+    post_team: "{percentage}"
+    post_critic: "{percentage}"
+    post_synthesis: "{percentage}"
+  # Agent Teams mode only (omit section entirely for Task tool mode)
+  agent_teams:
+    model_class: "opus | sonnet"
+    teammates_spawned: 3
+    work_complete_received:
+      technical-architect: true | false
+      eng-delivery-lead: true | false
+      qa-critic: true | false
+    peer_dms_observed: "{count of CC-to-lead summaries received}"
+    stall_checks_sent: "{count}"
+    shutdown_gate_respected: true | false
+    at_confirmation_choice: "opus | sonnet | switched-to-task-tool"
