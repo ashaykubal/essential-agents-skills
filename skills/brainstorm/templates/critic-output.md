@@ -12,6 +12,10 @@ key_challenges:
 
 # {Topic} — Critical Analysis
 
+## Problem Validation
+
+{Should this problem be solved at all? Is the premise valid? What evidence suggests this is worth investing in? Challenge the topic itself, not just the proposals.}
+
 ## Cost-Benefit Assessment
 
 {Is the investment justified? Quantify where possible.}

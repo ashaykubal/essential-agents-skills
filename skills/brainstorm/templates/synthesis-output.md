@@ -1,7 +1,8 @@
 ---
 topic: {topic}
 phase: brainstorm
-agents_synthesized: 5
+mode: scoped | exploratory
+agents_synthesized: "{count}"  # 5 for scoped, 4 for exploratory
 overall_verdict: proceed | modify | defer | kill
 verdict_source: critical-analyst
 ---
@@ -26,17 +27,30 @@ verdict_source: critical-analyst
 - **{Role B}**: {position}
 - **Decision needed**: {what must be decided}
 
+## Debate Dynamics (--exploratory only)
+
+{Remove this section entirely for --scoped mode.}
+
+{Capture how the AT peer debate shaped the analysis:}
+- {Where teammates explicitly challenged each other}
+- {Positions that evolved during debate (cite Post-Debate Update sections)}
+- {Unresolved disagreements that require user decision}
+
 ## Critical Analyst Verdict
 
 **Verdict**: {proceed / modify / defer / kill}
 **Confidence**: {high / medium / low}
 **Conditions**: {conditions for verdict to hold}
 
+## Problem Validation
+
+{From Critical Analyst's Problem Validation section — should this problem be solved at all?}
+
 ## Implementation Outline
 
-{High-level approach combining Architect's design, Dev Lead's plan, PM's priorities}
+{High-level approach combining Architect's design, delivery plan, and priorities}
 
-### v1 Scope (from PM)
+### v1 Scope
 
 {What is in v1, what is deferred}
 
@@ -44,7 +58,7 @@ verdict_source: critical-analyst
 
 {How it fits together}
 
-### Build Plan (from Dev Lead)
+### Build Plan
 
 {Ordering, dependencies, effort}
 
@@ -65,4 +79,4 @@ verdict_source: critical-analyst
 
 ## Incomplete Coverage
 
-{Document any agent failures or gaps here. Remove this section if all 5 agents completed successfully.}
+{Document any agent failures or gaps here. Remove this section if all agents completed successfully.}

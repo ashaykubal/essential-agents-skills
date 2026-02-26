@@ -1,49 +1,81 @@
 diagnostic:
-  skill: bulwark-brainstorm
+  skill: brainstorm
   timestamp: "{ISO-8601 timestamp}"
   invocation:
     topic: "{topic description}"
     source: prompt | document
     research_file: null | "{path}"
+    mode: scoped | exploratory
   agents:
-    total_spawned: 5
+    total_spawned: "{count}"  # 5 for --scoped, 4 for --exploratory (SME counted)
     successful: "{count}"
     retried: "{count}"
     failed: "{count}"
     agents_list:
+      # --scoped mode agents:
       - name: project-sme
         model: opus
         status: success | retried | failed
         output_file: "logs/brainstorm/{topic-slug}/01-project-sme.md"
         stage: 2
-      - name: product-manager
+      - name: product-manager          # --scoped only
         model: opus
         status: success | retried | failed
         output_file: "logs/brainstorm/{topic-slug}/02-product-manager.md"
-        stage: 3
+        stage: 3A
       - name: technical-architect
         model: opus
         status: success | retried | failed
         output_file: "logs/brainstorm/{topic-slug}/03-technical-architect.md"
-        stage: 3
-      - name: development-lead
+        stage: 3A
+      - name: development-lead         # --scoped only
         model: opus
         status: success | retried | failed
         output_file: "logs/brainstorm/{topic-slug}/04-development-lead.md"
-        stage: 3
+        stage: 3A
       - name: critical-analyst
         model: opus
         status: success | retried | failed
         output_file: "logs/brainstorm/{topic-slug}/05-critical-analyst.md"
         stage: 4
+      # --exploratory mode agents (replace --scoped Stage 3A/4 entries above):
+      # - name: product-delivery-lead  # --exploratory only
+      #   model: "{opus | sonnet}"
+      #   status: success | retried | failed
+      #   output_file: "logs/brainstorm/{topic-slug}/02-product-delivery-lead.md"
+      #   stage: 3B
+      # - name: technical-architect
+      #   model: "{opus | sonnet}"
+      #   status: success | retried | failed
+      #   output_file: "logs/brainstorm/{topic-slug}/03-technical-architect.md"
+      #   stage: 3B
+      # - name: critical-analyst
+      #   model: "{opus | sonnet}"
+      #   status: success | retried | failed
+      #   output_file: "logs/brainstorm/{topic-slug}/04-critical-analyst.md"
+      #   stage: 3B
+  # Agent Teams metrics — only present in --exploratory mode
+  # Remove this entire block for --scoped mode
+  agent_teams:
+    display_mode: in-process
+    delegate_mode: true
+    teammate_count: 3
+    teammate_model: "{opus | sonnet}"
+    peer_challenges_observed: "{count}"
+    at_failure_recovery: false | "{description}"
   pre_flight_interview: skipped | completed
   pre_flight_rounds: "{count}"
+  mode_detection:
+    env_var_set: true | false
+    user_requested: scoped | exploratory | default
+    effective_mode: scoped | exploratory
+    fallback_reason: null | "{reason}"
   post_synthesis_interview: skipped | completed
   post_synthesis_rounds: "{count}"
-  synthesis_file: "logs/brainstorm/{topic-slug}/synthesis.md"
+  synthesis_file: "artifacts/brainstorm/{topic-slug}/synthesis.md"
   token_checkpoints:
     pre_spawn: "{percentage}"
     post_sme: "{percentage}"
     post_roles: "{percentage}"
-    post_critic: "{percentage}"
+    post_critic: "{percentage}"       # --scoped only
     post_synthesis: "{percentage}"
