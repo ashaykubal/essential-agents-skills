@@ -1,5 +1,5 @@
 diagnostic:
-  skill: bulwark-research
+  skill: research
   timestamp: "{ISO-8601 timestamp}"
   invocation:
     topic: "{topic description}"

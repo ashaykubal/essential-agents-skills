@@ -93,7 +93,7 @@ This skill uses a multi-stage pipeline. You are the orchestrator. Follow every i
 **Arguments:**
 - `<topic-or-prompt>` - Free-text topic description or problem statement
 - `--doc <path>` - Use a document as the topic source
-- `--research <synthesis-file>` - Path to Phase 1 research synthesis (from research skill). Strongly recommended.
+- `--research <synthesis-file>` - Path to Phase 1 research synthesis (from research). Strongly recommended.
 - `--scoped` - (default) Sequential Task tool mode with 5 roles. Use when the problem statement is well understood.
 - `--exploratory` - Agent Teams peer debate with 4 roles. Use when validating whether an idea has merit. Requires `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`.
 

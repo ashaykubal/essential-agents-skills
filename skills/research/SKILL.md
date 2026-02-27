@@ -7,7 +7,7 @@ skills:
   - subagent-prompting
 ---
 
-# Bulwark Research
+# Research
 
 Structured multi-viewpoint research on a given topic. Spawns 5 Sonnet sub-agents in parallel, each analyzing from a distinct analytical viewpoint, then synthesizes into a single research document.
 
@@ -25,7 +25,7 @@ Structured multi-viewpoint research on a given topic. Spawns 5 Sonnet sub-agents
 | Multi-viewpoint analysis | "Analyze X from multiple angles" |
 
 **DO NOT use for:**
-- Evaluating implementation feasibility (use `bulwark-brainstorm`)
+- Evaluating implementation feasibility (use `brainstorm`)
 - Quick fact lookup (use web search or codebase exploration)
 - Code review (use `code-review`)
 - Debugging (use `issue-debugging`)
