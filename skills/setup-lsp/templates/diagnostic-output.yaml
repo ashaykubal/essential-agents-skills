@@ -1,0 +1,68 @@
+# LSP Setup Diagnostic Output Template
+#
+# Fill all fields and write the completed file to:
+#   logs/diagnostics/lsp-setup-{YYYYMMDD-HHMMSS}.yaml
+#
+# Replace all {placeholder} values with actual data.
+# Use null for fields that do not apply.
+
+metadata:
+  skill: setup-lsp
+  timestamp: "{ISO-8601}"            # e.g. 2026-02-28T14:32:00Z
+  invocation: "/setup-lsp {args}"   # full invocation string including any flags
+  session_id: "{SESSION_ID}"         # from ${CLAUDE_SESSION_ID}
+  mode: "{full|verify|troubleshoot}"
+
+detection:
+  detected_languages:
+    # One entry per detected language. Add or remove entries as needed.
+    - language: "{language-name}"
+      manifest_path: "{relative/path/to/manifest}"
+      plugin_name: "{plugin-name}"       # official marketplace plugin name (e.g. typescript-lsp)
+    - language: "{language-name}"
+      manifest_path: "{relative/path/to/manifest}"
+      plugin_name: "{plugin-name}"
+  user_confirmed: true   # true = user approved detected list; false = user modified list
+
+installation:
+  binary_installs:
+    # One entry per binary installation attempted.
+    - language: "{language-name}"
+      binary_command: "{install command run}"
+      status: "{ok|failed}"
+      error: null   # Replace null with error message string if failed
+    - language: "{language-name}"
+      binary_command: "{install command run}"
+      status: "{ok|failed}"
+      error: null
+  plugin_installs:
+    # One entry per plugin the user was asked to install.
+    - plugin_name: "{plugin-name}"       # e.g. typescript-lsp
+      user_confirmed: true               # true = user confirmed they installed the plugin
+    - plugin_name: "{plugin-name}"
+      user_confirmed: true
+  enable_lsp_tool_set: true   # true = ENABLE_LSP_TOOL=1 confirmed in settings.json and shell profile
+
+verification:
+  status: "{passed|failed|skipped}"   # skipped if mode=full and checkpoint not yet resumed
+  debug_log_path: "~/.claude/debug/latest"
+  servers_loaded: 0    # Value of "Total LSP servers loaded: N" from debug log. 0 if not found.
+  servers_expected: 0  # Count of plugins the user confirmed installing
+  log_line_found: true # true = "Total LSP servers loaded" line was present in debug log
+
+issues_found:
+  count: 0
+  items:
+    # One entry per issue detected during diagnostics. Empty list if none.
+    # - issue_number: 1
+    #   description: "ENABLE_LSP_TOOL not set"
+    #   detected: true
+    #   fix_applied: true
+    #   fix_result: "{resolved|unresolved}"
+    #   notes: null
+
+summary: |
+  {One or two sentence summary of setup outcome. Include server count, verification
+  status, and any unresolved issues. Example: "Installed binaries for 2 languages
+  (TypeScript, Python). User installed plugins typescript-lsp, pyright-lsp.
+  Verification passed: 2 servers loaded. No issues found."}
