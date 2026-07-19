@@ -12,7 +12,14 @@ pattern.
 |---|---|---|
 | `track-evidence.sh` | PostToolUse (matcher: Read) | log reads of `evidence/` files to `.claude/.evidence-reads` |
 | `gate-dod-status.sh` | PreToolUse (matcher: Write\|Edit) | DENY writes to `dod-status.json` unless evidence was read this session; reset the log on each allowed write (every flip needs fresh evidence) |
-| `commit-backstop.sh` | SessionEnd (Stop on older versions) | WIP-commit uncommitted work at session end — continuity insurance, never a green exit |
+| `commit-backstop.sh` | Stop | rolling WIP-commit of uncommitted work at each turn end — continuity insurance, never a green exit |
+
+Why `Stop` and not `SessionEnd` for the backstop: SessionEnd runs as the
+process tears down — safe only for async fire-and-forget work (telemetry),
+not for must-complete work like a commit — and it never fires on abrupt ends
+(terminal kill, OOM), which are exactly what the backstop insures against.
+Stop fires at every turn end, bounding loss to one turn; the rolling amend
+keeps per-turn firing from littering history.
 | `settings-snippet.json` | — | wiring example to merge into the project's `.claude/settings.json` |
 
 ## Install (the generated loop's L0 does this, then PROBES it)

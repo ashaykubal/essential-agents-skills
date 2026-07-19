@@ -73,9 +73,10 @@ Context rot is the enemy of long runs. Per mini-loop, the orchestrator:
 3. sets that mini-loop's GOAL line via `/goal` and works to green;
 4. commits (green exit), updates PROGRESS.md, ends the session.
 
-The commit-backstop hook (templates/hooks/) preserves anything uncommitted at
-session end as a `WIP:`-prefixed commit — continuity insurance, never a green
-exit. Green exits are always explicit commits made when the DoD flips.
+The commit-backstop Stop hook (templates/hooks/) preserves anything
+uncommitted at each turn end as a rolling `WIP:`-prefixed commit — continuity
+insurance, never a green exit. Green exits are always explicit commits made
+when the DoD flips.
 
 ## Fallback ladder (state it verbatim in MACHINERY)
 

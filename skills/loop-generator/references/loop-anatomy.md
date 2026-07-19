@@ -104,9 +104,9 @@ fresh session (or `/clear`) per mini-loop, re-reads the handoff surface
 (LOOP.md, PROGRESS.md, dod-status.json), sets that loop's `GOAL:` line via
 `/goal`, works to green, commits, ends the session. Condition template, /goal
 limits (transcript-only evaluator, 4k chars, one per session), and the
-three-step fallback ladder: `goal-runner.md`. The commit-backstop hook
-WIP-commits anything left at session end — continuity insurance, never a green
-exit.
+three-step fallback ladder: `goal-runner.md`. The commit-backstop Stop hook
+keeps a rolling WIP commit of anything left at each turn end — continuity
+insurance (bounds abrupt-end loss to one turn), never a green exit.
 
 ## Self-check (run at Stage 5 — fix before emit)
 
