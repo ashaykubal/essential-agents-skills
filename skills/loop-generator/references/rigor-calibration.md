@@ -27,6 +27,11 @@ authoring; record the calibration in the loop's header comment.
 - Mini-loops with per-item programmatic DoD, commit-per-green-exit
 - L0 harness setup with verifier smoke test on a planted defect
 - Hooks-enforced forbidden list (test/eval immutability above all)
+- Default-FAIL DoD status (dod-status.json all-false at L0) with the
+  evidence-gate hook chain — the claim side enforced deterministically, not
+  behaviorally (templates/hooks/)
+- One fresh session per mini-loop, driven by /goal where available
+  (loop-anatomy §Runner; goal-runner.md)
 - Layered verification: programmatic decides, cross-model reviewer on top
 - Mission-record read-only; escalation protocol with a rebuttal cap
 - GATES block for human dependencies (checkboxes, flip actions)
@@ -36,6 +41,10 @@ authoring; record the calibration in the loop's header comment.
   (the code whose silent failure corrupts the expensive step)
 - Spend-gated entry to the one-way step (owner re-approves the projected number)
 - Independent re-derivation of any score/tally that ratifies a phase
+- Kill-switch + steering files (halt-on-sentinel-file and STEER.md hooks) for
+  any run intended to go UNATTENDED
+- Browser-verified evaluation (the reviewer drives the running app, not
+  screenshots) when the surface under change is a UI
 
 **Adopt at HIGH blast radius / HIGH coordination only:**
 - WP YAML apparatus with verbatim scope transcription + out-of-scope fences
@@ -43,6 +52,13 @@ authoring; record the calibration in the loop's header comment.
 - Line-citation discipline + drift-check rituals + mechanical citation verifiers
 - gates.yaml as a machine-checked registry with programmatic probes
 - Append-only amendment registers with consequence sweeps
+
+**Re-simplify on model upgrades (standing discipline):** harness complexity is
+debt indexed to the weakest model that must run the loop. After each major
+model release, disable harness pieces (extra probes, rebuttal rounds, review
+layers) in a LOW-blast-radius loop and observe what actually regresses; keep
+only what is still load-bearing. Never re-simplify the evidence gate or the
+forbidden-list hooks — determinism is not model-indexed.
 
 **Skip-signals (you are over-engineering):**
 - The gates registry has fewer than ~5 entries → a GATES checklist block suffices

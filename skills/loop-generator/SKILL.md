@@ -12,7 +12,7 @@ allowed-tools:
   - Read
   - Task
   - Write
-version: 1.1.1
+version: 1.2.0
 author: "Ashay Kubal @ Qball Inc."
 ---
 
@@ -21,14 +21,18 @@ author: "Ashay Kubal @ Qball Inc."
 Turn a ratified scope into an executable loop spec. Output is a `LOOP.md` in the
 house pattern: an outcome-shaped GOAL, an operating-model block wired to the
 project's model-routing decision, GATES for owner attestations, mini-loops in
-dependency order each carrying its own **programmatic** definition-of-done,
-guardrails whose forbidden list is hook-implementable, and machinery (progress
-files, verifier protocol, triggers, exit).
+dependency order each carrying its own **programmatic** definition-of-done and a
+ready-to-paste **`/goal` runner condition**, a **default-FAIL DoD status file**
+whose flips are evidence-gated by hooks, guardrails whose forbidden list is
+hook-implementable, and machinery (progress files, runner + fallback ladder,
+verifier protocol, triggers, exit).
 
 The pattern distills the owner's mission harnesses: loop-per-unit-of-work,
 layered verification (programmatic checks decide, cross-model review on top),
-enforcement via hooks rather than prose. A complete worked example lives in
-`examples/` — self-contained, no external project context required.
+enforcement via hooks rather than prose — deterministic over behavioral, on
+both the write side (forbidden list) and the claim side (evidence-gated DoD
+flips). A complete worked example lives in `examples/` — self-contained, no
+external project context required.
 
 ---
 
@@ -66,8 +70,10 @@ starting.
 - [ ] **Stage 3 — Decomposition**: mini-loops derived with explicit dependency
       order; every gated item names its gate; no mini-loop lacks a DoD
 - [ ] **Stage 4 — Authoring**: `references/loop-anatomy.md` + `references/model-routing.md`
-      + `templates/LOOP-template.md` loaded BEFORE writing; every template section
-      present or consciously dropped with a reason in the header comment
+      + `references/goal-runner.md` + `templates/LOOP-template.md` loaded BEFORE
+      writing; every template section present or consciously dropped with a
+      reason in the header comment; every mini-loop carries its GOAL line; L0
+      carries the evidence-gate install + probe items (templates/hooks/)
 - [ ] **Stage 5 — Self-verification**: the checklist in `references/loop-anatomy.md`
       §Self-check run against the drafted loop; failures fixed before emit
 - [ ] **Stage 6 — Emit**: LOOP.md written to the agreed path; summary to the user
@@ -86,7 +92,9 @@ starting.
 | **Loop anatomy + DoD rules** | `references/loop-anatomy.md` | **REQUIRED** | Stage 4, before writing |
 | **Rigor calibration** | `references/rigor-calibration.md` | **REQUIRED** | Stage 2 |
 | **Model routing** | `references/model-routing.md` | **REQUIRED** | Stage 4 (skippable in transform mode if the target project's routing block already exists — copy it verbatim instead) |
+| **Runner integration** | `references/goal-runner.md` | **REQUIRED** | Stage 4 (GOAL lines + MACHINERY runner/fallback) |
 | **Skeleton** | `templates/LOOP-template.md` | **REQUIRED** | Stage 4 |
+| **Evidence-gate hooks** | `templates/hooks/*` | **REQUIRED** — the generated L0 copies/adapts them into the target project | Stage 4 (cite in L0), install happens when the loop runs |
 | **Worked example** | `examples/example-phase-loop.md` | OPTIONAL | First loop in a project, or whenever unsure of the house voice |
 
 **Fallback**: if a reference file is missing, `examples/example-phase-loop.md` is
@@ -149,6 +157,14 @@ open. The non-negotiables (verbatim in every generated loop):
    read-only to the loop; only planner/owner sessions edit them.
 4. **Escalation protocol** — maker ≤2 rebuttals per verifier finding, then
    escalate per the routing reference; every escalation logged in PROGRESS.md.
+5. **Default-FAIL evidence gate** — DoD status lives in `dod-status.json`
+   (L0 initializes every item false); flips are hook-gated on evidence reads
+   (`templates/hooks/`). Deterministic over behavioral: a rule a hook can
+   enforce is never left as prose — on the claim side as well as the write side.
+6. **Runner discipline** — every mini-loop carries a `GOAL:` line (a valid
+   /goal condition per `references/goal-runner.md`); MACHINERY names the
+   runner (one fresh session per mini-loop, driven by /goal) and the fallback
+   ladder for harnesses without it.
 
 ### Stage 5: Self-verification
 
@@ -193,3 +209,9 @@ for "why does this loop look the way it does."
 - `examples/example-phase-loop.md` — complete worked example (strategy mode),
   self-contained
 - Built-in `/loop` skill — UNRELATED (recurring task execution, not loop authoring)
+- Built-in `/goal` command — the house-preferred RUNNER for generated
+  mini-loops (this skill authors the spec; /goal drives one mini-loop to
+  green). See `references/goal-runner.md`.
+- Lineage for the v1.2 evidence gate + runner integration: Anthropic's
+  long-running-agents patterns (github.com/anthropics/cwc-long-running-agents)
+  and the /goal docs (code.claude.com/docs/en/goal).

@@ -35,9 +35,14 @@ which mini-loops it blocks. Rules:
 
 ## Mini-loops
 
-Each mini-loop: title, `(deps: …)` including gates, ordered tasks with model
-routing hints where non-obvious, and a `DoD (programmatic)` block. Rules:
+Each mini-loop: title, `(deps: …)` including gates, a `GOAL:` line, ordered
+tasks with model routing hints where non-obvious, and a `DoD (programmatic)`
+block. Rules:
 - A mini-loop is a unit whose DoD can flip green independently of its siblings.
+- The `GOAL:` line is a ready-to-paste `/goal` condition (see
+  `goal-runner.md`): the DoD restated as transcript-verifiable claims + the
+  evidence-surfacing clause + verifier-verdict clause + a turn bound restating
+  GUARDRAILS. Every claim in it must be demonstrable in-conversation.
 - Setup/harness is always L0: environment, verifier install + smoke test on a
   planted defect, hooks installed AND probed, progress files initialized.
 - Strategy-tier items inside an execution phase (design specs, eval gold checks)
@@ -61,6 +66,16 @@ a Haiku agent verify the item without judgment? If not, rewrite it.
 Numbers in DoDs cite their source (baseline, decision id, or measured projection)
 — an uncited threshold is an invented one.
 
+**Default-FAIL status (deterministic, not behavioral).** DoD state lives in
+`loops/<phase>/dod-status.json`, initialized by L0 with every item `false` —
+nothing is done until proven done. Every DoD check tees its output into
+`loops/<phase>/evidence/`, and the flip to `true` is hook-gated: the write is
+DENIED unless evidence files were Read this session (`templates/hooks/`,
+installed and probed by L0). PROGRESS.md narrates; `dod-status.json` decides.
+A DoD item the hook chain cannot gate — no command output to tee — fails the
+litmus test above; rewrite it. The principle: a rule a hook can enforce is
+never left as prose.
+
 ## GUARDRAILS
 
 - `max_iterations` per mini-loop and `stop_if_no_progress` (N iterations without
@@ -82,6 +97,17 @@ Numbers in DoDs cite their source (baseline, decision id, or measured projection
 - `exit:` what state closes the phase, including any provisional-close rule for
   open-gated mini-loops (close provisionally + coda when the gate lands).
 
+## Runner & session discipline
+
+One mini-loop = one fresh session = one `/goal`. The orchestrator starts a
+fresh session (or `/clear`) per mini-loop, re-reads the handoff surface
+(LOOP.md, PROGRESS.md, dod-status.json), sets that loop's `GOAL:` line via
+`/goal`, works to green, commits, ends the session. Condition template, /goal
+limits (transcript-only evaluator, 4k chars, one per session), and the
+three-step fallback ladder: `goal-runner.md`. The commit-backstop hook
+WIP-commits anything left at session end — continuity insurance, never a green
+exit.
+
 ## Self-check (run at Stage 5 — fix before emit)
 
 1. Can every DoD item be verified by a command/test/score with no judgment?
@@ -94,3 +120,10 @@ Numbers in DoDs cite their source (baseline, decision id, or measured projection
 8. Do spend guardrails name the ledger they read? Concurrency cap present?
 9. Could an Opus orchestrator run this with zero questions? Every question it
    would need to ask is a defect in the loop.
+10. Does every mini-loop carry a `GOAL:` line whose every claim is
+    transcript-verifiable, with a turn bound restating the guardrails?
+11. Does L0 initialize dod-status.json (all items false) + the evidence/ dir,
+    install the evidence-gate hooks, and PROBE a block (flip without evidence
+    → BLOCKED; with evidence → allowed)?
+12. Does MACHINERY state the runner (/goal per mini-loop, fresh session) and
+    the fallback ladder from goal-runner.md?

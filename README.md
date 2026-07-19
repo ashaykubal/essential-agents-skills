@@ -15,7 +15,7 @@ Each skill is a self-contained markdown file that plugs into any project's `.cla
 | [test-audit](skills/test-audit/) | Finds tests that mock the system under test, assert on calls instead of output, or fake external dependencies | `/test-audit [path]` |
 | [session-handoff](skills/session-handoff/) | Generates a handoff document with progress, decisions, and next steps for the following session | `/session-handoff` |
 | [ez-statusline](skills/ez-statusline/) | Multi-line terminal status bar with context gauge, model badge, git info, and preset switching | `/ez-statusline init` |
-| [loop-generator](skills/loop-generator/) | Generates an executable LOOP.md — mini-loops with programmatic definition-of-done, human gates, model routing, and hooks-enforced guardrails — from a scope doc or workpackage YAML | `/loop-generator <scope-doc \| WP.yaml>` |
+| [loop-generator](skills/loop-generator/) | Generates an executable LOOP.md — mini-loops with programmatic definition-of-done, default-FAIL evidence-gate hooks, per-mini-loop /goal runner conditions, human gates, model routing, and hooks-enforced guardrails — from a scope doc or workpackage YAML | `/loop-generator <scope-doc \| WP.yaml>` |
 
 ### Internal (loaded by other skills)
 
